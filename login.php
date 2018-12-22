@@ -1,141 +1,133 @@
 <html>
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+<?php include 'phpscript.php';?>
+
+<?php include 'uzbrojenie.html';?>
+
 </head>
 <body>
 
-<?php
-
-		$user = 'jakubadamus';
-		$DBpassword = 'Kubaadamus1991';
-		$db = 'jakubadamus';
-		$host = 'mysql.cba.pl';
-		$port = 3360;
-
-		$database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-		
-		echo "Status podłączenia do bazy danych: ";
-        if ($database) {
-		  echo 'conected';
-		} else {
-		  echo 'not conected';
-        }
-        echo "<br>";
-
-        $login = ($_GET["login"]);
-        $password = ($_GET["password"]);
-        $ranga;
-        $srednia;
-
-        $mat=5;
-        $fiz=3;
-        $pl=2;
-        $coins=0;
 
 
-        //Złap tutaj wszystkie wiersze odppwiadające uczniowi o indeksie 1 i wyłącznie z matematyki.
+<div class="chart_wrapper" style="width:600px;height:600px;display:block;">
 
-//Iterując przez wiersze, pobieraj datę i ocenę. Tworz z tego dwie tabele - date i note. date będą do labeli a note będą do data.
+<div class="character" style="width:600px;height:600px;background-color:red;position:relative;display:block;">
 
+<div class="head" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:100px;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="torso" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="gloves" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:70%;transform:translate(-50%,-50%);"></div>
+<div class="legs" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:340px;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="boots" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:450px;left:60%;transform:translate(-50%,-50%);"></div>
+<div class="weapon" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:30%;transform:translate(-50%,-50%);"></div>
 
-//Przedmioty//
+</div>
 
-$mat_date = array();
-$mat_note = array();
+<div class="shop" style="width:560px;height:560px;background-color:green;position:relative;display:block;padding:20px;">
 
-$fiz_date = array();
-$fiz_note = array();
-
-$inf_date = array();
-$inf_note = array();
-
-$pl_date = array();
-$pl_note = array();
-
-//==============//
-        
-        $sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
-        $result = mysqli_query($database,$sql);
-
-        $success = mysqli_num_rows($result);
-        printRow($success);
-
-        if($success>0)
-        {
-            while ($row=mysqli_fetch_row($result))
-            {
-            $id = $row[0];
-            $ranga = $row[8];
-            $srednia = $row[9];
-            }
-    
-            echo "<h1>Witaj ".$login." ".$password."</h1>";
-    
-            printRow("ID:".$id);
-            printRow($ranga);
-            printRow($srednia);
-    
-            $sql = "SELECT * FROM oceny WHERE uczen_ID = '".$id."'" ;
-            $result = mysqli_query($database,$sql);
-    
-            $success = mysqli_num_rows($result);
-            printRow($success);
+    <div id="shop_tab">
+    </div>
 
 
-            echo "Oceny <br/>";
-            $average = 0.0;
-            while ($row=mysqli_fetch_row($result))
-            {
-            printRow($row[0]."\t".$row[1]."\t".$row[2]."\t".$row[3]."\t".$row[4]."\t".$row[5]."\t");
-            $average += $row[3];
+<div id="helmets" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet5" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet6" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet7" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet8" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+</div>
 
-                if($row[2]=="mat")
-            {
-                $coins += $mat*$row[3];
-                //dodawaj do date i note//
-                array_push($mat_date, $row[5]);
-                array_push($mat_note, $row[3]);
-            }
-            if($row[2]=="fiz")
-            {
-                $coins += $fiz*$row[3];
-                array_push($fiz_date, $row[5]);
-                array_push($fiz_note, $row[3]);
-            }
-            if($row[2]=="pl")
-            {
-                $coins += $pl*$row[3];
-                array_push($pl_date, $row[5]);
-                array_push($pl_note, $row[3]);
-            }
+<div id="torsos" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet5" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet6" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
 
-            }
+</div>
 
-            $average = $average/$success;
+<div id="gloves" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
 
-            echo $average;
+</div>
 
-            echo "Punkty: ".$coins;
-
-        }
-        else{
-            printRow("NIEPRAWIDŁOWA NAZWA UŻYTKOWNIKA LUB HASŁO, SPRÓBUJ PONOWNIE");
-        }
-
-function printRow($a){
-echo $a."<br/>";
-}
+<div id="legs" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
 
 
-?>
+</div>
 
-<div class="chart_wrapper" style="width:600px;height:600px;">
-<canvas id="mat_chart" ></canvas>
-<canvas id="fiz_chart" ></canvas>
-<canvas id="pl_chart" ></canvas>
+<div id="boots" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+
+
+</div>
+
+<div id="weapons" class="hidable">
+    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+
+
+</div>
+
+</div>
+<canvas id="mat_chart" ></canvas><div id="mat"></div>
+<canvas id="fiz_chart" ></canvas><div id="fiz"></div>
+<canvas id="pl_chart" ></canvas><div id="pl"></div>
+<canvas id="balance" class="chartjs" width="770" height="385" style="display: block; width: 770px; height: 385px;"></canvas>
+
+
+
+
+
+
 </div>
 
 
+</body>
+
+<script>
+    $('.head').click(function() {
+        document.getElementById("shop_tab").innerHTML = "helmy";
+        $('.hidable').show();
+    $('.hidable').not('#helmets').hide();
+});
+$('.torso').click(function() {
+        document.getElementById("shop_tab").innerHTML = "tors";
+        $('.hidable').show();
+        $('.hidable').not('#torsos').hide();
+});
+$('.gloves').click(function() {
+        document.getElementById("shop_tab").innerHTML = "rekawice";
+        $('.hidable').show();
+        $('.hidable').not('#gloves').hide();
+});
+$('.legs').click(function() {
+        document.getElementById("shop_tab").innerHTML = "nogi";
+        $('.hidable').show();
+        $('.hidable').not('#legs').hide();
+});
+$('.boots').click(function() {
+        document.getElementById("shop_tab").innerHTML = "buty";
+        $('.hidable').show();
+        $('.hidable').not('#boots').hide();
+});
+$('.weapon').click(function() {
+        document.getElementById("shop_tab").innerHTML = "broń";
+        $('.hidable').show();
+        $('.hidable').not('#weapons').hide();
+});
+</script>
 
 
 
@@ -143,33 +135,39 @@ echo $a."<br/>";
 <script>
 var mat_date = <?php echo json_encode($mat_date); ?>;
 var mat_note = <?php echo json_encode($mat_note); ?>;
+var mat_coins = "<?php echo $mat_coins ?>";
 new Chart(document.getElementById("mat_chart"),{"type":"line","data":{"labels":
     mat_date
 ,"datasets":[{"label":"matematyka",
 "data":mat_note,
 "fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
-</script>
 
+document.getElementById("mat").innerHTML = mat_coins;
 
-<script>
 var fiz_date = <?php echo json_encode($fiz_date); ?>;
 var fiz_note = <?php echo json_encode($fiz_note); ?>;
+var fiz_coins = "<?php echo $fiz_coins ?>";
 new Chart(document.getElementById("fiz_chart"),{"type":"line","data":{"labels":
     fiz_date
 ,"datasets":[{"label":"fizyka",
 "data":fiz_note,
 "fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
-</script>
+document.getElementById("fiz").innerHTML = fiz_coins;
 
-
-<script>
 var pl_date = <?php echo json_encode($pl_date); ?>;
 var pl_note = <?php echo json_encode($pl_note); ?>;
+var pl_coins = "<?php echo $pl_coins ?>";
 new Chart(document.getElementById("pl_chart"),{"type":"line","data":{"labels":
     pl_date
 ,"datasets":[{"label":"polski",
 "data":pl_note,
 "fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
-</script>
+document.getElementById("pl").innerHTML = pl_coins;
 
+new Chart(document.getElementById("balance"),
+{"type":"doughnut",
+"data":{"labels":["Matematyka","Fizyka","Polski"],
+"datasets":[{"label":"Balans",
+"data":[mat_coins,fiz_coins,pl_coins],"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"]}]}});
+</script>
 </html>
