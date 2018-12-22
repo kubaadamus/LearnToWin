@@ -6,7 +6,6 @@
 
 <?php
 
-
 		$user = 'jakubadamus';
 		$DBpassword = 'Kubaadamus1991';
 		$db = 'jakubadamus';
@@ -38,8 +37,20 @@
 
 //Iterując przez wiersze, pobieraj datę i ocenę. Tworz z tego dwie tabele - date i note. date będą do labeli a note będą do data.
 
-$date = array();
-$note = array();
+
+//Przedmioty//
+
+$mat_date = array();
+$mat_note = array();
+
+$fiz_date = array();
+$fiz_note = array();
+
+$inf_date = array();
+$inf_note = array();
+
+$pl_date = array();
+$pl_note = array();
 
 //==============//
         
@@ -82,16 +93,20 @@ $note = array();
             {
                 $coins += $mat*$row[3];
                 //dodawaj do date i note//
-                array_push($date, $row[5]);
-                array_push($note, $row[3]);
+                array_push($mat_date, $row[5]);
+                array_push($mat_note, $row[3]);
             }
             if($row[2]=="fiz")
             {
                 $coins += $fiz*$row[3];
+                array_push($fiz_date, $row[5]);
+                array_push($fiz_note, $row[3]);
             }
             if($row[2]=="pl")
             {
                 $coins += $pl*$row[3];
+                array_push($pl_date, $row[5]);
+                array_push($pl_note, $row[3]);
             }
 
             }
@@ -102,51 +117,59 @@ $note = array();
 
             echo "Punkty: ".$coins;
 
-
-
         }
         else{
             printRow("NIEPRAWIDŁOWA NAZWA UŻYTKOWNIKA LUB HASŁO, SPRÓBUJ PONOWNIE");
         }
-
-
 
 function printRow($a){
 echo $a."<br/>";
 }
 
 
-
-echo "oceny i daty z matmy";
-
-printRow($date[0]." ".$note[0]);
-printRow($date[1]." ".$note[1]);
-printRow($date[2]." ".$note[2]);
-
-
-
 ?>
 
+<div class="chart_wrapper" style="width:600px;height:600px;">
+<canvas id="mat_chart" ></canvas>
+<canvas id="fiz_chart" ></canvas>
+<canvas id="pl_chart" ></canvas>
+</div>
 
 
 
-<canvas id="myChart" width="400" height="400"></canvas>
+
+
 
 <script>
-
-
-var date = <?php echo json_encode($date); ?>;
-var note = <?php echo json_encode($note); ?>;
-
-new Chart(document.getElementById("myChart"),{"type":"line","data":{"labels":
-date
-,"datasets":[{"label":"My First Dataset",
-"data":note,
+var mat_date = <?php echo json_encode($mat_date); ?>;
+var mat_note = <?php echo json_encode($mat_note); ?>;
+new Chart(document.getElementById("mat_chart"),{"type":"line","data":{"labels":
+    mat_date
+,"datasets":[{"label":"matematyka",
+"data":mat_note,
 "fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
 </script>
 
 
+<script>
+var fiz_date = <?php echo json_encode($fiz_date); ?>;
+var fiz_note = <?php echo json_encode($fiz_note); ?>;
+new Chart(document.getElementById("fiz_chart"),{"type":"line","data":{"labels":
+    fiz_date
+,"datasets":[{"label":"fizyka",
+"data":fiz_note,
+"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
+</script>
 
 
+<script>
+var pl_date = <?php echo json_encode($pl_date); ?>;
+var pl_note = <?php echo json_encode($pl_note); ?>;
+new Chart(document.getElementById("pl_chart"),{"type":"line","data":{"labels":
+    pl_date
+,"datasets":[{"label":"polski",
+"data":pl_note,
+"fill":false,"borderColor":"rgb(75, 192, 192)","lineTension":0.1}]},"options":{}});
+</script>
 
 </html>
