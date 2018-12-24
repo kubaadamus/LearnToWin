@@ -6,6 +6,7 @@
 
 <?php include 'uzbrojenie.html';?>
 
+
 </head>
 <body>
 
@@ -24,58 +25,63 @@
 
 </div>
 
-<div class="shop" style="width:560px;height:560px;background-color:green;position:relative;display:block;padding:20px;">
+<div class="shop" style="width:560px;background-color:green;position:relative;display:block;padding:20px;">
 
     <div id="shop_tab">
     </div>
 
 
 <div id="helmets" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet5" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet6" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet7" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet8" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    
+
+<script>
+var helmets = <?php echo json_encode($helmet_array) ?>;
+
+for(i=0; i<helmets.length ;i++)
+{
+    console.log(helmets[i].helmet_name);
+}
+
+</script>
+
+
 </div>
 
 <div id="torsos" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet5" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet6" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet4" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet5" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet6" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
 
 </div>
 
 <div id="gloves" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet4" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet4" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
 
 </div>
 
 <div id="legs" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
 
 
 </div>
 
 <div id="boots" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
 
 
 </div>
 
 <div id="weapons" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:black;position:relative;display:inline-block;margin:20px;"></div>
+    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
 
 
 </div>
@@ -97,10 +103,10 @@
 </body>
 
 <script>
-    $('.head').click(function() {
+$('.head').click(function() {
         document.getElementById("shop_tab").innerHTML = "helmy";
         $('.hidable').show();
-    $('.hidable').not('#helmets').hide();
+$('.hidable').not('#helmets').hide();
 });
 $('.torso').click(function() {
         document.getElementById("shop_tab").innerHTML = "tors";
@@ -129,6 +135,9 @@ $('.weapon').click(function() {
 });
 </script>
 
+
+
+</script>
 
 
 
