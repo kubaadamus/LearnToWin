@@ -5,16 +5,18 @@
 <link rel = "stylesheet" type = "text/css" href = "styles.css" />
 <?php include 'phpscript.php';?>
 
-
 <script>
 var coins = parseInt("<?php echo $coins ?>");
 
 
 
-alert(coins);
+//alert(coins);
 
 $( document ).ready(function() {
     document.getElementById("coins").innerHTML = coins;
+
+    $('#login').val(("<?php echo $login ?>"));
+    $('#password').val(("<?php echo $password ?>"));
 });
 
 
@@ -22,22 +24,52 @@ $(document).click(function(event) {
 
     if($(event.target).attr('class')=="helmet")
     {
-        alert($(event.target).attr('class') +" "+ $(event.target).attr('id') + "price: "+ helmets[$(event.target).attr('id')-1].helmet_price);
+        //alert($(event.target).attr('class') +" "+ $(event.target).attr('id') + "price: "+ helmets[$(event.target).attr('id')-1].helmet_price);
 
-        if(parseInt(coins)>=parseInt(helmets[$(event.target).attr('id')-1].helmet_price))
-        {
-            coins -= parseInt(helmets[$(event.target).attr('id')-1].helmet_price);
-            alert("Kupiono hełm");
+        //parseInt(coins)>=parseInt(helmets[$(event.target).attr('id')-1].helmet_price)
+        
+            //coins -= parseInt(helmets[$(event.target).attr('id')-1].helmet_price);
+            //alert("Kupiono hełm");
             document.getElementById("coins").innerHTML = coins;
-        }
+
+            var someVar = helmets[$(event.target).attr('id')-1].helmet_name;
+            var anotherVar = helmets[$(event.target).attr('id')-1].helmet_price;
+
+            $('#itemClass').val("helmet");
+            $('#item').val(someVar);
+            $('#price').val(anotherVar);
+
+        
     }
 
 });
+
+
+
 
 </script>
 
 </head>
 <body>
+
+
+
+<form id="myForm" action="buy.php">
+<input type="text" id="itemClass" name="itemClass" value="helmetx"><br>
+  <input type="text" id="item" name="item" value="0"><br>
+  <input type="text" id="price" name="price" value="price"><br><br>
+
+  <input type="text" id="login" name="login" value="price"><br><br>
+  <input type="text" id="password" name="password" value="price"><br><br>
+  <input type="submit" value="Submit form">
+</form>
+
+<script>
+function myFunction() {
+  document.getElementById("myForm").submit();
+}
+</script>
+
 
 
 

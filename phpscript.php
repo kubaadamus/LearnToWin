@@ -92,6 +92,12 @@ if($success>0)
     }
 
     }
+
+    //Po obliczeniu średniej, daj na serwer coinsy które masz
+
+    $sql_updateCoins = "UPDATE uczniowie SET coins = $coins WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+    $helmets = mysqli_query($database, $sql_updateCoins);
+
     //====================POBIERANIE UZBROJENIA====================//
     $sql_helmets = "SELECT * FROM helmets";
     $helmets = mysqli_query($database,$sql_helmets);
