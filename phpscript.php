@@ -58,7 +58,6 @@ if($success>0)
     $ranga = $row[11];
     }
     echo "<h1>Witaj ".$login." ".$password."</h1>";
-    printRow("Twoja ranga: ".$ranga);
 
     //RYSOWANIE STATYSTYK
     $sql = "SELECT * FROM oceny WHERE uczen_ID = '".$id."'" ;
@@ -93,29 +92,33 @@ if($success>0)
     }
 
     }
-
-    echo "Punkty: ".$coins."<br>";
     //====================POBIERANIE UZBROJENIA====================//
-    $sql = "SELECT * FROM helmets";
-    $result = mysqli_query($database,$sql);
+    $sql_helmets = "SELECT * FROM helmets";
+    $helmets = mysqli_query($database,$sql_helmets);
+    $sql_torsos = "SELECT * FROM torsos";
+    $torsos = mysqli_query($database,$sql_torsos);
     $helmet_array = array();
+    $torso_array = array();
 
-    while ($row=mysqli_fetch_row($result))
+    while ($row=mysqli_fetch_row($helmets))
     {
-        debug_to_console("Wypisuję hełm:");
-        printRow(
-        "|id: ".$row[0].
-        "| name: ".$row[1].
-        "| price: ".$row[2].
-        "| defence: ".$row[3].
-        "| thumbnail: ".$row[4]);
-        array_push($helmet_array, new Person($row[0],$row[1],$row[2],$row[3],$row[4]));
-        debug_to_console("Dodano hełm do tablicy");
-        debug_to_console("tablica ma teraz: ".count($helmet_array)." elementów");
-        debug_to_console("------------------------------------");
+        //debug_to_console("Wypisuję hełm:");
+        //printRow("|id: ".$row[0]."| name: ".$row[1]."| price: ".$row[2]."| defence: ".$row[3]."| thumbnail: ".$row[4]);
+        array_push($helmet_array, new Helmet($row[0],$row[1],$row[2],$row[3],$row[4]));
+        //debug_to_console("Dodano hełm do tablicy");
+        //debug_to_console("tablica ma teraz: ".count($helmet_array)." elementów");
+        //debug_to_console("------------------------------------");
     }
 
-    //$janusz = new Person(1,"Basic Green",50,5,"assets/images/helmet.png");
+    while ($row=mysqli_fetch_row($torsos))
+    {
+        //debug_to_console("Wypisuję torso:");
+        //printRow("|id: ".$row[0]."| name: ".$row[1]."| price: ".$row[2]."| defence: ".$row[3]."| thumbnail: ".$row[4]);
+        array_push($torso_array, new Torso($row[0],$row[1],$row[2],$row[3],$row[4]));
+        //debug_to_console("Dodano torso do tablicy");
+        //debug_to_console("tablica ma teraz: ".count($torso_array)." elementów");
+        //debug_to_console("------------------------------------");
+    }
 
 }
 else{
@@ -124,7 +127,7 @@ else{
 
 
 //------------------------------------------------ P O B I E R A N I E  E K W I P U N K U  ---------------------------------------------------//
-class Person
+class Helmet
 {
    public $helmet_id = null;
    public $helmet_name = null;
@@ -139,7 +142,7 @@ class Person
       $this->helmet_price = $price;
       $this->helmet_defence = $defence;
       $this->helmet_thumbnail = $thumbnail;
-      $this->wypisz();
+      //$this->wypisz();
    }
    public function wypisz(){
        debug_to_console("Stworzono obiekt typu helmet.");
@@ -150,7 +153,32 @@ class Person
        debug_to_console("thumbnail:".$this->helmet_thumbnail);
    }
 }
-
+class Torso
+{
+   public $torso_id = null;
+   public $torso_name = null;
+   public $torso_price = null;
+   public $torso_defence = null;
+   public $torso_thumbnail = null;
+ 
+   public function __construct($id, $name,$price,$defence,$thumbnail)
+   {
+      $this->torso_id = $id;
+      $this->torso_name = $name;
+      $this->torso_price = $price;
+      $this->torso_defence = $defence;
+      $this->torso_thumbnail = $thumbnail;
+      //$this->wypisz();
+   }
+   public function wypisz(){
+       debug_to_console("Stworzono obiekt typu torso.");
+       debug_to_console("id:".$this->torso_id);
+       debug_to_console("name:".$this->torso_name);
+       debug_to_console("price:".$this->torso_price);
+       debug_to_console("defence:".$this->torso_defence);
+       debug_to_console("thumbnail:".$this->torso_thumbnail);
+   }
+}
 function printRow($a){
 echo $a."<br/>";
 }

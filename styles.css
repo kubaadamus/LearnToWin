@@ -1,0 +1,12 @@
+
+.helmet, .torso{
+    width:80px;
+    height:80px;
+    background-color: grey;
+    margin: 20px;
+    display: inline-block;
+}
+
+.hidable{
+    display: none;
+}

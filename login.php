@@ -2,10 +2,39 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+<link rel = "stylesheet" type = "text/css" href = "styles.css" />
 <?php include 'phpscript.php';?>
 
-<?php include 'uzbrojenie.html';?>
 
+<script>
+var coins = parseInt("<?php echo $coins ?>");
+
+
+
+alert(coins);
+
+$( document ).ready(function() {
+    document.getElementById("coins").innerHTML = coins;
+});
+
+
+$(document).click(function(event) {
+
+    if($(event.target).attr('class')=="helmet")
+    {
+        alert($(event.target).attr('class') +" "+ $(event.target).attr('id') + "price: "+ helmets[$(event.target).attr('id')-1].helmet_price);
+
+        if(parseInt(coins)>=parseInt(helmets[$(event.target).attr('id')-1].helmet_price))
+        {
+            coins -= parseInt(helmets[$(event.target).attr('id')-1].helmet_price);
+            alert("Kupiono hełm");
+            document.getElementById("coins").innerHTML = coins;
+        }
+    }
+
+});
+
+</script>
 
 </head>
 <body>
@@ -14,10 +43,14 @@
 
 <div class="chart_wrapper" style="width:600px;height:600px;display:block;">
 
+
+<div id="coins">
+    
+</div>
 <div class="character" style="width:600px;height:600px;background-color:red;position:relative;display:block;">
 
 <div class="head" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:100px;left:50%;transform:translate(-50%,-50%);"></div>
-<div class="torso" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="chest" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:50%;transform:translate(-50%,-50%);"></div>
 <div class="gloves" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:220px;left:70%;transform:translate(-50%,-50%);"></div>
 <div class="legs" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:340px;left:50%;transform:translate(-50%,-50%);"></div>
 <div class="boots" style="width:100px;height:100px;background-color:blue;position:absolute;display:block;top:450px;left:60%;transform:translate(-50%,-50%);"></div>
@@ -32,56 +65,43 @@
 
 
 <div id="helmets" class="hidable">
-    
-
 <script>
 var helmets = <?php echo json_encode($helmet_array) ?>;
-
 for(i=0; i<helmets.length ;i++)
 {
-    console.log(helmets[i].helmet_name);
+    $( "#helmets" ).append( "<div class='helmet' id='"+helmets[i].helmet_id+"'>"+helmets[i].helmet_name+"</div>" );
 }
-
 </script>
-
-
 </div>
-
 <div id="torsos" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet4" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet5" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet6" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-
+<script>
+var torsos = <?php echo json_encode($torso_array) ?>;
+for(i=0; i<torsos.length ;i++)
+{
+    $( "#torsos" ).append( "<div class='torso' id='"+torsos[i].torso_id+"'>"+torsos[i].torso_name+"</div>" );
+}
+</script>
 </div>
 
 <div id="gloves" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet4" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+
 
 </div>
 
 <div id="legs" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet3" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+
 
 
 </div>
 
 <div id="boots" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
-    <div id="helmet2" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+
 
 
 </div>
 
 <div id="weapons" class="hidable">
-    <div id="helmet1" style="width:80px;height:80px;background-color:grey;position:relative;display:inline-block;margin:20px;"></div>
+
 
 
 </div>
@@ -91,11 +111,6 @@ for(i=0; i<helmets.length ;i++)
 <canvas id="fiz_chart" ></canvas><div id="fiz"></div>
 <canvas id="pl_chart" ></canvas><div id="pl"></div>
 <canvas id="balance" class="chartjs" width="770" height="385" style="display: block; width: 770px; height: 385px;"></canvas>
-
-
-
-
-
 
 </div>
 
@@ -108,7 +123,7 @@ $('.head').click(function() {
         $('.hidable').show();
 $('.hidable').not('#helmets').hide();
 });
-$('.torso').click(function() {
+$('.chest').click(function() {
         document.getElementById("shop_tab").innerHTML = "tors";
         $('.hidable').show();
         $('.hidable').not('#torsos').hide();
@@ -134,11 +149,6 @@ $('.weapon').click(function() {
         $('.hidable').not('#weapons').hide();
 });
 </script>
-
-
-
-</script>
-
 
 
 <script>
