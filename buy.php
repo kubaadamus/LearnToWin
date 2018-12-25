@@ -10,6 +10,7 @@ $item = ($_GET["item"]);
 $price = ($_GET["price"]);
 $login = ($_GET["login"]);
 $password = ($_GET["password"]);
+$coins = 0;
 
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
 
@@ -39,11 +40,15 @@ if($success>0)
 {
     while ($row=mysqli_fetch_row($result))
     {
-    echo $row[12];
+    $coins = $row[12];
     }
 }
 
+echo $coins;
 
+$rest = $coins - $price;
+
+echo "<br> Po dokonaniu zakupu zostanie Ci: ".$rest." monet";
 
 function printRow($a){
 echo $a."<br/>";
