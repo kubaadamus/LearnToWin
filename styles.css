@@ -10,3 +10,15 @@
 .hidable{
     display: none;
 }
+
+.item_group{
+    display: flex;
+    flex-direction: column;
+    width:100px;
+}
+
+.shop_container{
+    display: flex;
+    justify-content: center;
+
+}

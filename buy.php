@@ -125,7 +125,7 @@ foreach ($elements as $value)
 
 
 
-
+include 'uczen_value.php';
 
 
 
@@ -150,13 +150,17 @@ if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
             while ($row=mysqli_fetch_row($result))
             {
                 echo "cena kupowanego $item to ".$row[2]."<br>";
-                $hui=$row[2];
+                $current_item_price=$row[2];
             }
         }
 
-        echo "Po zakupie zostanie ".($coins-$wartosc_postaci-$hui)."<br>";
 
-        if(($coins-$wartosc_postaci-$hui)>=0) // to tylko sprawdza czy uczeń ma jakiś hajs.. a nie czy ten hajs starczy na zakup lol
+
+        echo "Po zakupie zostanie ".($spendable_coins-$current_item_price)."<br>";
+
+
+
+        if(($spendable_coins-$current_item_price)>=0) // to tylko sprawdza czy uczeń ma jakiś hajs.. a nie czy ten hajs starczy na zakup lol
         {
             
             $uczen_pobrany->$item = $id;
@@ -195,6 +199,6 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
 
 <script>
 
-//document.getElementById("myForm").submit();
+document.getElementById("myForm").submit();
 
 </script>
