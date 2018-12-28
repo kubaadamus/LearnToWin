@@ -96,13 +96,12 @@ echo "<br> Po dokonaniu zakupu zostanie Ci: ".$rest." monet";
 
    if(intval($coins)-intval($price)>=0)
     {
-        echo "Możesz kupić XD";
+        echo "<br>Możesz kupić XD";
         $sql_updateGear = "UPDATE uczniowie SET helm = $number WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
-        echo $sql_updateGear;
         mysqli_query($database, $sql_updateGear); // Wykonaj uaktualnienie uzbrojenia
     }
     else{
-        echo "NIE MOŻESZ KUPIĆ";
+        echo "<br>NIE MOŻESZ KUPIĆ";
     }
 
 

@@ -31,7 +31,7 @@
 
     
     $("input").click(function(event) { // Przy kliknięciu na kupno jakiegoś elementu submituje form buyform z odpowiednim inputem
-        alert($(event.target).attr("obj_type"));
+        //alert($(event.target).attr("obj_type"));
         $('#cokupic').val($(event.target).attr("obj_type"));
         $('#ktore').val($(event.target).attr("obj_number"));
         $('#buyform').submit();
