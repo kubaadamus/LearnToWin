@@ -139,13 +139,16 @@ foreach ($elements as $value)
     {
         while ($row=mysqli_fetch_row($result))
         {
-            echo "cena $value: ".$row[2];
+            echo "<br>cena $value: ".$row[2];
             $wartosc_postaci += $row[2];
         }
     }
+    else{
+        echo "<br> $value nie kupione.";
+    }
 }
 
-echo "wartosc postaci: ".$wartosc_postaci;
+echo "<br>wartosc postaci: ".$wartosc_postaci;
 
 echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
 
@@ -160,6 +163,8 @@ function debug_to_console( $data ) {
         $output = implode( ',', $output);
     echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
 }
+
+
 
 
 ?>
