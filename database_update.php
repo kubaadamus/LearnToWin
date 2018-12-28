@@ -95,7 +95,7 @@ class uczen_object
       $this->pants = $_pants;
       $this->boots = $_boots;
       $this->weapon = $_weapon;
-      $this->wypisz();
+      //$this->wypisz();
    }
    public function wypisz(){
        //Ekwipunek
@@ -122,12 +122,12 @@ class uczen_object
         }
     }
 
-echo "<br>".json_encode($uczen_pobrany);
+//echo "<br>".json_encode($uczen_pobrany);
 
 
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
-$elements = array("base","helmet", "torso","gloves",);
+$elements = array("base","helmet", "torso","gloves","pants","boots","weapon");
 foreach ($elements as $value)
 {
 
@@ -139,18 +139,18 @@ foreach ($elements as $value)
     {
         while ($row=mysqli_fetch_row($result))
         {
-            echo "<br>cena $value: ".$row[2];
+            //echo "<br>cena $value: ".$row[2];
             $wartosc_postaci += $row[2];
         }
     }
     else{
-        echo "<br> $value nie kupione.";
+        //echo "<br> $value nie kupione.";
     }
 }
 
-echo "<br>wartosc postaci: ".$wartosc_postaci;
+echo "<br>aktualna wartosc postaci to: ".$wartosc_postaci;
 
-echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
+echo "<br> Możesz wydać: ".($coins-$wartosc_postaci)."<br>";
 
 
 

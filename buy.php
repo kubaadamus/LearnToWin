@@ -1,3 +1,11 @@
+<html>
+<head>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
+</head>
+</html>
+
+
+
 <?php
 //-------------------------------------- Ł Ą C Z E N I E  Z  B A Z Ą  D A N Y C H ------------------------------------------//
 $user = 'jakubadamus';
@@ -102,18 +110,18 @@ foreach ($elements as $value)
     {
         while ($row=mysqli_fetch_row($result))
         {
-            echo "<br>cena $value: ".$row[2];
+            //echo "<br>cena $value: ".$row[2];
             $wartosc_postaci += $row[2];
         }
     }
     else{
-        echo "<br> $value nie kupione.";
+        //echo "<br> $value nie kupione.";
     }
 }
 
-echo "<br>wartosc postaci: ".$wartosc_postaci;
+//echo "<br>wartosc postaci: ".$wartosc_postaci;
 
-echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
+//echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
 
 
 
@@ -134,7 +142,7 @@ if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
     {
 
         $sql = "SELECT * FROM $item WHERE ID =".$id;
-        echo "<br>".$sql."<br>";
+        //echo "<br>".$sql."<br>";
         $result = mysqli_query($database,$sql);
         $success = mysqli_num_rows($result);
         if($success>0)
@@ -184,4 +192,12 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
 
 
 
+
+
 ?>
+
+<script>
+
+//document.getElementById("myForm").submit();
+
+</script>
