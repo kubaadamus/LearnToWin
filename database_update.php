@@ -67,7 +67,8 @@ if($success>0)
     echo "<br>Twoje oceny zostały zaktualizowane. masz ".$coins." monet.";
 }
 else{
-    printRow("NIEPRAWIDŁOWA NAZWA UŻYTKOWNIKA LUB HASŁO, SPRÓBUJ PONOWNIE");
+    echo("NIEPRAWIDŁOWA NAZWA UŻYTKOWNIKA LUB HASŁO, SPRÓBUJ PONOWNIE");
+    exit();
 }
 
 //=================================================== STWORZENIE OBIEKTU UCZNIA =============================================//
@@ -122,7 +123,7 @@ class uczen_object
         }
     }
 
-//echo "<br>".json_encode($uczen_pobrany);
+echo "<br>".json_encode($uczen_pobrany);
 
 
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
@@ -164,7 +165,94 @@ function debug_to_console( $data ) {
     echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
 }
 
+class item_object{
 
+   public $id = 0;
+   public $name = 0;
+   public $price = 0;
+   public $defence = 0;
+   public $attack = 0;
+   public $thumbnail = 0;
+
+ 
+   public function __construct($_id=0, $_name=0, $_price=0, $_defence=0, $_attack=0, $_thumbnail=0)
+   {
+
+      $this->id = $_id;
+      $this->name = $_name;
+      $this->price = $_price;
+      $this->defence = $_defence;
+      $this->attack = $_attack;
+      $this->thumbnail = $_thumbnail;
+
+   }
+}
+
+//======================================== POBRANIE CAŁEGO UZBROJENIA Z BAZY DANYCH ===========================================//
+$elements = array("base","helmet", "torso","gloves","pants","boots","weapon");
+$base_array = array();
+$helmet_array = array();
+$torso_array = array();
+$gloves_array = array();
+$pants_array = array();
+$boots_array = array();
+$weapon_array = array();
+
+$oldValue = '0';
+
+foreach ($elements as $value)
+{
+
+    $sql = "SELECT * FROM $value";
+    $result = mysqli_query($database,$sql);
+    $success = mysqli_num_rows($result);
+    if($success>0)
+    {
+        while ($row=mysqli_fetch_row($result)) //row to tabela komórek danego rekordu. rekordy pobierane są kolejno
+        {
+            //echo json_encode(new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]))."<br/>";
+            if($value=='base')
+            {
+                array_push($base_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='helmet')
+            {
+                array_push($helmet_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='torso')
+            {
+                array_push($torso_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='gloves')
+            {
+                array_push($gloves_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='pants')
+            {
+                array_push($pants_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='boots')
+            {
+                array_push($boots_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($value=='weapon')
+            {
+                array_push($weapon_array, new item_object($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
+            }
+            if($oldValue!=$value)
+            {
+                
+                $oldValue=$value;
+                echo "<br>";
+            }
+            echo"<input style='background-color:red;width:100px;height:100px;display:block;position:relative;' class='przycisk' type='submit' value='Buy $value $row[0]' sellbuy='buy' item_name='$value' item_id='$row[0]' >";
+
+        }
+    }
+    else{
+
+    }
+}
 
 
 ?>

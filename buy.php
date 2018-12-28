@@ -93,7 +93,7 @@ class uczen_object
         }
     }
 
-echo "<br>".json_encode($uczen_pobrany);
+//echo "<br>".json_encode($uczen_pobrany);
 
 
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
@@ -132,12 +132,12 @@ foreach ($elements as $value)
 
 if($sell_buy=='sell')
 {
-    echo "Odkładamy: ".$item;
+    echo "Odkładamy: ".$item."<br/>";
     $uczen_pobrany->$item = 0;
 }
 if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
 {
-    echo "Kupujemy: ";
+    echo "Kupujemy: ".$item."<br/>";
     if($uczen_pobrany->$item ==0) // czy uczeń ma TEN item czy nie ma
     {
 
@@ -149,38 +149,35 @@ if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
         {
             while ($row=mysqli_fetch_row($result))
             {
-                echo "<br>cena kupowanego $item to ".$row[2]."<br>";
+                echo "cena kupowanego $item to ".$row[2]."<br>";
                 $hui=$row[2];
             }
         }
 
-        echo "Po zakupie zostanie ".($coins-$wartosc_postaci-$hui);
+        echo "Po zakupie zostanie ".($coins-$wartosc_postaci-$hui)."<br>";
 
         if(($coins-$wartosc_postaci-$hui)>=0) // to tylko sprawdza czy uczeń ma jakiś hajs.. a nie czy ten hajs starczy na zakup lol
         {
             
             $uczen_pobrany->$item = $id;
-            echo "<br> Zakup udany";
+            echo " Zakup udany<br>";
         }
         else{
-            echo "<br> Za malo środków!";
+            echo " Za malo środków!<br>";
         }
 
     }
     else{
-        echo "<br> Najpierw sprzedaj poprzedni item";
+        echo " Najpierw sprzedaj poprzedni item<br>";
     }
 
 }
 
 
-echo "<br>".json_encode($uczen_pobrany);
+//echo "<br>".json_encode($uczen_pobrany);
 
 $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_pobrany)."' WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
    mysqli_query($database, $sql_updateUczen); 
-
-    echo "wykonano";
-
 
     echo "
     <form id='myForm' action='login.php'>

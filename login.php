@@ -7,14 +7,6 @@
 </head>
 <body>
 
-
-
-<script>
-
-
-
-</script>
-
 <form id='myForm' action='buy.php' style="display:none">
     <input type='text' id='login' name='login' value='<?php echo $login ;?>'><br><br>
     <input type='text' id='password' name='password' value='<?php echo $password ;?>'><br><br>
@@ -89,7 +81,6 @@ if($uczen_pobrany->weapon!=0)
     echo "<br/><input class='przycisk' type='submit' value='Sell weapon' sellbuy='sell' item_name='weapon' item_id='1' >";
 }
 else{
-
     echo
     "
     <br/>
@@ -97,18 +88,23 @@ else{
 <input class='przycisk' type='submit' value='Buy weapon 2' sellbuy='buy' item_name='weapon' item_id='2' >
 <input class='przycisk' type='submit' value='Buy weapon 3' sellbuy='buy' item_name='weapon' item_id='3' >
     ";
-
 }
+
+$bar = (($wartosc_postaci*intval(100))/$coins);
+echo "<div style='background-color:red;width:20px;height:100px;position:relative'>
+<div style='background-color:blue;width:20px;height:".$bar.";position:absolute;bottom:0px'></div>
+</div>";
+
+
+
+//Pobieranie wszystkich hełmów
+
+
+
+
+
+
 ?>
-
-
-
-
-
-
-
-
-
 
 <script>
 $('.przycisk').click(function( event ) {
