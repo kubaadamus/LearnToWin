@@ -14,8 +14,8 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $login = ($_GET["login"]);
-$sell_buy = ($_GET["sellbuy"]);
 $password = ($_GET["password"]);
+$sell_buy = ($_GET["sellbuy"]);
 $item = ($_GET["item"]);
 $id = ($_GET["id"]);
 $autoPowrot = ($_GET["autoPowrot"]);
@@ -28,8 +28,9 @@ if ($database) {
 } else {
   echo 'not conected';
 }
-echo "<br>";
+echo "<br> WTFFFFFFF";
 
+echo $login." ".$password;
 
 
 
@@ -38,6 +39,7 @@ $result = mysqli_query($database,$sql);
 $success = mysqli_num_rows($result);
 if($success>0)
 {
+
     while ($row=mysqli_fetch_row($result))
     {
         $coins = $row[5];

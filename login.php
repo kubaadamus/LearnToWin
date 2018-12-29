@@ -2,7 +2,6 @@
 <head>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <link rel = 'stylesheet' type = 'text/css' href = 'styles.css' />
 <?php include 'database_update.php';?>
 
@@ -126,16 +125,17 @@ CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
 
 });
 
-function CheckBuyAvailibility($_item,$object){
+function CheckBuyAvailibility($_item,$_object){
     if($('#item').val()==$_item)
 {
-    if($object==0)
+    if($_object==0)
     {
-    alert("można kupić base!");
-    $('#myForm').submit();
+    alert("można kupić "+$_item+" "+$_object);
+    //$('#myForm').submit();
+    ajaxTest();
     }
     else{
-        SellPopup($_item,$object);
+        SellPopup($_item,$_object);
 }
 
 }
@@ -148,7 +148,8 @@ if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłoży
       $('#id').val($_id);
       $('#sellbuy').val('sell');
       $('#autoPowrot').val('1');
-      $('#myForm').submit();
+      //$('#myForm').submit();
+      ajaxTest();
 } else {
 
 }
@@ -157,23 +158,29 @@ if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłoży
 $( document ).ready(function() {
     $( "input[select=base]").click();
     $( "input[itemtype=base][itemid=1]").click();
-    testAjaxa();
-    alert("ajax wykonany");
 });
 
 
-function testAjaxa() {
+function ajaxTest() {
 
-    var login ='Jakub';
-    var password ='Adamus';
-           $.post('test.php',{value:login,value2:password}, function(data){
-            alert(data);
+          var login ='Jakub';
+          var password = 'Adamus';
+          var sellbuy = $('#sellbuy').val();
+          var item = $('#item').val();
+          var id = $('#id').val();
+          var autoPowrot = $('#autoPowrot').val();
+           $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
+             //alert(data);
+             location.reload();
            });
+           return false;
 
-};
+      };
 
 
 </script>
+
+
 
 
 </body>

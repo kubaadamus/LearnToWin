@@ -8,8 +8,8 @@ $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
 
-$login = ($_POST["value"]);
-$password = ($_POST["value2"]);
+$login = ($_POST["login"]);
+$password = ($_POST["password"]);
 
 echo "Status podłączenia do bazy danych: ";
 
