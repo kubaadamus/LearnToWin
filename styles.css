@@ -1,30 +1,73 @@
-
-.helmet, .torso{
-    width:80px;
-    height:80px;
-    background-color: grey;
-    margin: 20px;
-    display: inline-block;
+.columns{
+    display: flex;
+    flex-direction: column;
+    width:fit-content;
+    background-color: cyan;
 }
-
-.hidable{
-    display: none;
-}
-
-.item_group{
+.rows{
     display: flex;
     flex-direction: row;
-    width:500px;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
+    background-color: darkgrey;
+    position: relative;
+    justify-content: space-between;
 
-.shop_container{
+}
+.character_wrapper{
+    background-color: brown;
+
+    flex-grow: 2;
+}
+.item_container{
+    background-color: lightgreen;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    width: fit-content;
+    margin:0 auto;
+}
+.item_thumbnail{
+width: 200px;
+height: 200px;
+background-color: darkgrey;
+
+}
+.item_properties{
+width:200px;
+height:200px;
+background-color: red;
+}
+.buyBtn{
+    width:100px;
+    height:30px;
+    background-color: yellow;
+    align-self: center;
+}
+.storage_wrapper{
+border:2px solid black;
+width:fit-content;
+}
+.shopSelectBtn{
+    width:80px;
+}
+.shop_container{
+    border:2px solid green;
+height:200px;
+width:510px;
+overflow: auto;
+}
+.item_group{
+    border:2px solid red;
+}
+.itemSelect{
+    width:100px;
+    height:100px;
 
 }
 
-div[itemClass="weapon"],div[itemClass="boots"] { 
+div[itemClass]
+{
+display: none;
+}
 
-  }
+.hidden{
+    display: none;
+}

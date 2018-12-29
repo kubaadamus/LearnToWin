@@ -8,11 +8,18 @@ echo "<div style='background-color:red;width:20px;height:100px;position:relative
 
 function DrawAllGear($_array,$_name){
     echo "<div class='item_group' itemClass='$_name'>";
+for($i=0; $i<5; $i++)
+{
+    
     foreach ($_array as $value)
     {
-        echo "<input style='background-image:url($value->thumbnail);width:100px;height:100px' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";echo "<br/>";
+        echo "<input style='background-image:url($value->thumbnail);' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
     }
-    echo "</div>";
+    
+}
+echo "</div>";
+
+
 }
 //echo "<input style='background-image:url($value->thumbnail);width:100px;height:100px' class='przycisk' type='submit' value='Buy $_name $value->id' sellbuy='buy' item_name='$_name' item_id='$value->id' >";echo "<br/>";
 //echo "<br/><input class='przycisk' type='submit' value='Sell weapon $uczen_pobrany->weapon' sellbuy='sell' item_name='weapon' item_id='1' ><br/>";

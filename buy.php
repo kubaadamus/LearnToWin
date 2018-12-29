@@ -18,6 +18,7 @@ $sell_buy = ($_GET["sellbuy"]);
 $password = ($_GET["password"]);
 $item = ($_GET["item"]);
 $id = ($_GET["id"]);
+$autoPowrot = ($_GET["autoPowrot"]);
 
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
 
@@ -194,7 +195,9 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
 ?>
 
 <script>
+var autoPowrot = <?php echo $autoPowrot ?>
 
-//document.getElementById("myForm").submit();
+if(autoPowrot)
+document.getElementById("myForm").submit();
 
 </script>

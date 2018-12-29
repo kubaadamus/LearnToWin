@@ -9,37 +9,60 @@
 </head>
 <body>
 
-<form id='myForm' action='buy.php' style="">
+<form class="hidden" id='myForm' action='buy.php' style="">
     <input type='text' id='login' name='login' value='<?php echo $login ;?>'><br><br>
     <input type='text' id='password' name='password' value='<?php echo $password ;?>'><br><br>
     <input type='text' id='sellbuy' name='sellbuy' value='sell/buy'><br><br>
     <input type='text' id='item' name='item' value='item_name'><br>
     <input type='text' id='id' name='id' value='item_id'><br>
+    <input type='text' id='autoPowrot' name='autoPowrot' value='0'><br>
 </form>
 <?php
 include 'draw_shop.php';
 ?>
 
+<div class="rows">
+    <div class="character_wrapper">
+        
+    </div>
+    <div class="columns">
+        <div class="item_container">
+            <div class="item_thumbnail" ></div>
+            <div class="item_properties" ></div>
+            <input class="buyBtn" id="buyBtn" type='button' value='kup' sellbuy='buy' item_name='name' item_id='id' >
+        </div>
+        <div class="storage_wrapper">
+            <input class="ShopSelectBtn" type="button" value=" bases" select="base">
+            <input class="ShopSelectBtn" type="button" value=" weapons" select="weapon">
+            <input class="ShopSelectBtn" type="button" value=" boots" select="boots">
+            <input class="ShopSelectBtn" type="button" value=" helmets" select="helmet">
+            <input class="ShopSelectBtn" type="button" value=" gloves" select="gloves">
+            <input class="ShopSelectBtn" type="button" value=" pants" select="pants">
+        </div>
 
-<div class="item_container" style="background-color:lightgrey;width:500px;min-height:500px">
-<div class="item_thumbnail" style="background-image:url(assets/bases/base_sniper.png);width:200px;height:200px;border:2px solid black;"></div>
-<div class="item_properties"   style="background-color:red;width:200px;height:200px;border:2px solid black;"></div>
-<input style="background-color:green;width:100px;height:50px" id="buyBtn" type='button' value='kup' sellbuy='buy' item_name='name' item_id='id' >
+        <div class="shop_container">
+        <?php DrawAllGear($base_array,'base');?>
+        <?php DrawAllGear($weapon_array,'weapon');?>
+        <?php DrawAllGear($boots_array,'boots');?>
+
+        <?php DrawAllGear($helmet_array,'helmet');?>
+        <?php DrawAllGear($gloves_array,'gloves');?>
+        <?php DrawAllGear($pants_array,'pants');?>
+        </div>
+    </div>
 
 </div>
 
-<div class="shop_container">
-    <input class="ShopSelectBtn" type="button" value="select bases" select="base">
-    <input class="ShopSelectBtn" type="button" value="select weapons" select="weapon">
-    <input class="ShopSelectBtn" type="button" value="select boots" select="boots">
-<?php DrawAllGear($base_array,'base');?>
-<?php DrawAllGear($weapon_array,'weapon');?>
-<?php DrawAllGear($boots_array,'boots');?>
-</div>
+
 
 
 
 <script>
+
+var uczen_pobrany = <?php echo json_encode($uczen_pobrany); ?>;
+
+
+
 $('.przycisk').click(function( event ) {
   //event.target.nodeName
   //alert($(event.target).attr('class'));
@@ -48,15 +71,12 @@ $('.przycisk').click(function( event ) {
   $('#id').attr('value',$(event.target).attr('item_id'));
   $('#myForm').submit();
 });
-
-
 //Shop Items Select
 $('.ShopSelectBtn').click(function( event ) {
   $( "div[itemClass]" ).hide();
   $( "div[itemClass='"+$(event.target).attr('select')+"']" ).show();
+
 });
-
-
 //Select Specific Item
 $('.itemSelect').click(function( event ) {
       //alert($(event.target).attr('class'));
@@ -101,15 +121,37 @@ $('.itemSelect').click(function( event ) {
       $('#item').val($(event.target).attr('itemType'));
       $('#id').val($(event.target).attr('itemID'));
       $('#sellbuy').val('buy');
-      
+      $('#autoPowrot').val('0');
+      $('#buyBtn').show();
 });
-
-
 $('#buyBtn').click(function( event ) {
+
+if($('#item').val()=='helmet' && uczen_pobrany.helmet==0)
+{
+    alert("można kupić helmet!");
     $('#myForm').submit();
+}
+else
+{
+    //alert("Najpierw sprzedaj helmet który masz, lol")
+    SellPopup();
+}
+    
+
+function SellPopup() {
+
+  if (confirm("Aby zakupić nowy hełm, musisz odłożyć poprzedni. Odłożyć?")) {
+        $('#item').val('helmet');
+        $('#id').val(uczen_pobrany.helmet);
+        $('#sellbuy').val('sell');
+        $('#autoPowrot').val('1');
+        $('#myForm').submit();
+  } else {
+
+  }
+}
+
 });
-
 </script>
-
 </body>
 </html>
