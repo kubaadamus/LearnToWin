@@ -13,8 +13,10 @@
 
 .item_group{
     display: flex;
-    flex-direction: column;
-    width:100px;
+    flex-direction: row;
+    width:500px;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
 
 .shop_container{
@@ -22,3 +24,7 @@
     justify-content: center;
 
 }
+
+div[itemClass="weapon"],div[itemClass="boots"] { 
+
+  }

@@ -195,6 +195,6 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
 
 <script>
 
-document.getElementById("myForm").submit();
+//document.getElementById("myForm").submit();
 
 </script>
