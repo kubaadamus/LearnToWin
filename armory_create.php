@@ -9,7 +9,6 @@ $pants_array = array();
 $boots_array = array();
 $weapon_array = array();
 
-$oldValue = '0';
 
 foreach ($elements as $value)
 {
@@ -50,13 +49,6 @@ foreach ($elements as $value)
             {
                 array_push($weapon_array, new item_object($row[0],$row[1],$row[2],null,$row[3],$row[4]));
             }
-            if($oldValue!=$value)
-            {
-                
-                $oldValue=$value;
-                echo "<br>";
-            }
-            //echo"<input style='background-color:red;width:100px;height:100px;display:block;position:relative;' class='przycisk' type='submit' value='Buy $value $row[0]' sellbuy='buy' item_name='$value' item_id='$row[0]' >";
 
         }
     }

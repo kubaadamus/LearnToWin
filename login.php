@@ -2,9 +2,9 @@
 <head>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <link rel = 'stylesheet' type = 'text/css' href = 'styles.css' />
 <?php include 'database_update.php';?>
-
 
 </head>
 <body>
@@ -20,7 +20,6 @@
 <?php
 include 'draw_shop.php';
 ?>
-
 <div class="rows">
     <div class="character_wrapper">
         
@@ -52,15 +51,8 @@ include 'draw_shop.php';
     </div>
 
 </div>
-
-
-
-
 <script>
-
 var uczen_pobrany = <?php echo json_encode($uczen_pobrany); ?>;
-
-
 
 $('.przycisk').click(function( event ) {
   //event.target.nodeName
@@ -112,7 +104,6 @@ $('.itemSelect').click(function( event ) {
                 object =weapon_array[$(event.target).attr('itemID')-1];
             }
 
-
       $('.item_thumbnail').css("background-image", "url("+object.thumbnail+")");
 
       $('.item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
@@ -135,7 +126,6 @@ CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
 
 });
 
-
 function CheckBuyAvailibility($_item,$object){
     if($('#item').val()==$_item)
 {
@@ -150,9 +140,7 @@ function CheckBuyAvailibility($_item,$object){
 
 }
 }
-
-
-    
+  
 function SellPopup($_item,$_id) {
 
 if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłożyć?")) {
@@ -165,6 +153,28 @@ if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłoży
 
 }
 }
+
+$( document ).ready(function() {
+    $( "input[select=base]").click();
+    $( "input[itemtype=base][itemid=1]").click();
+    testAjaxa();
+    alert("ajax wykonany");
+});
+
+
+function testAjaxa() {
+
+    var login ='Jakub';
+    var password ='Adamus';
+           $.post('test.php',{value:login,value2:password}, function(data){
+            alert(data);
+           });
+
+};
+
+
 </script>
+
+
 </body>
 </html>
