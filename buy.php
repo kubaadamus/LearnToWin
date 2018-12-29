@@ -196,8 +196,6 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
 
 <script>
 var autoPowrot = <?php echo $autoPowrot ?>
-
 if(autoPowrot)
 document.getElementById("myForm").submit();
-
 </script>

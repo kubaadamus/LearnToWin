@@ -6,14 +6,24 @@ echo "<div style='background-color:red;width:20px;height:100px;position:relative
 </div>";
 
 
-function DrawAllGear($_array,$_name){
+function DrawAllGear($_array,$_name,$_spendable){
     echo "<div class='item_group' itemClass='$_name'>";
+
+
+    
 for($i=0; $i<5; $i++)
 {
-    
+
     foreach ($_array as $value)
     {
-        echo "<input style='background-image:url($value->thumbnail);' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
+        if($_spendable>=$value->price)
+        {
+            echo "<input style='background-image:url($value->thumbnail);' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
+        }
+        else{
+            echo "<input style='background-image:url($value->thumbnail);border:2px solid red' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
+        }
+        
     }
     
 }

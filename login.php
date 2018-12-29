@@ -41,18 +41,17 @@ include 'draw_shop.php';
         </div>
 
         <div class="shop_container">
-        <?php DrawAllGear($base_array,'base');?>
-        <?php DrawAllGear($weapon_array,'weapon');?>
-        <?php DrawAllGear($boots_array,'boots');?>
+        <?php DrawAllGear($base_array,'base',$spendable_coins);?>
+        <?php DrawAllGear($weapon_array,'weapon',$spendable_coins);?>
+        <?php DrawAllGear($boots_array,'boots',$spendable_coins);?>
 
-        <?php DrawAllGear($helmet_array,'helmet');?>
-        <?php DrawAllGear($gloves_array,'gloves');?>
-        <?php DrawAllGear($pants_array,'pants');?>
+        <?php DrawAllGear($helmet_array,'helmet',$spendable_coins);?>
+        <?php DrawAllGear($gloves_array,'gloves',$spendable_coins);?>
+        <?php DrawAllGear($pants_array,'pants',$spendable_coins);?>
         </div>
     </div>
 
 </div>
-
 
 
 
@@ -126,32 +125,46 @@ $('.itemSelect').click(function( event ) {
 });
 $('#buyBtn').click(function( event ) {
 
-if($('#item').val()=='helmet' && uczen_pobrany.helmet==0)
-{
-    alert("można kupić helmet!");
-    $('#myForm').submit();
-}
-else
-{
-    //alert("Najpierw sprzedaj helmet który masz, lol")
-    SellPopup();
-}
-    
-
-function SellPopup() {
-
-  if (confirm("Aby zakupić nowy hełm, musisz odłożyć poprzedni. Odłożyć?")) {
-        $('#item').val('helmet');
-        $('#id').val(uczen_pobrany.helmet);
-        $('#sellbuy').val('sell');
-        $('#autoPowrot').val('1');
-        $('#myForm').submit();
-  } else {
-
-  }
-}
+CheckBuyAvailibility('base',uczen_pobrany.base);
+CheckBuyAvailibility('helmet',uczen_pobrany.helmet);
+CheckBuyAvailibility('torso',uczen_pobrany.torso);
+CheckBuyAvailibility('gloves',uczen_pobrany.gloves);
+CheckBuyAvailibility('pants',uczen_pobrany.pants);
+CheckBuyAvailibility('boots',uczen_pobrany.boots);
+CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
 
 });
+
+
+function CheckBuyAvailibility($_item,$object){
+    if($('#item').val()==$_item)
+{
+    if($object==0)
+    {
+    alert("można kupić base!");
+    $('#myForm').submit();
+    }
+    else{
+        SellPopup($_item,$object);
+}
+
+}
+}
+
+
+    
+function SellPopup($_item,$_id) {
+
+if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłożyć?")) {
+      $('#item').val($_item);
+      $('#id').val($_id);
+      $('#sellbuy').val('sell');
+      $('#autoPowrot').val('1');
+      $('#myForm').submit();
+} else {
+
+}
+}
 </script>
 </body>
 </html>
