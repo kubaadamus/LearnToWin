@@ -31,6 +31,7 @@ include 'draw_shop.php';
         </div>
         <div class="storage_wrapper">
             <input class="ShopSelectBtn" type="button" value=" bases" select="base">
+            <input class="ShopSelectBtn" type="button" value=" torsos" select="torso">
             <input class="ShopSelectBtn" type="button" value=" weapons" select="weapon">
             <input class="ShopSelectBtn" type="button" value=" boots" select="boots">
             <input class="ShopSelectBtn" type="button" value=" helmets" select="helmet">
@@ -41,6 +42,7 @@ include 'draw_shop.php';
         <div class="shop_container">
         <?php DrawAllGear($base_array,'base',$spendable_coins);?>
         <?php DrawAllGear($weapon_array,'weapon',$spendable_coins);?>
+        <?php DrawAllGear($torso_array,'torso',$spendable_coins);?>
         <?php DrawAllGear($boots_array,'boots',$spendable_coins);?>
 
         <?php DrawAllGear($helmet_array,'helmet',$spendable_coins);?>
@@ -130,7 +132,7 @@ function CheckBuyAvailibility($_item,$_object){
 {
     if($_object==0)
     {
-    alert("można kupić "+$_item+" "+$_object);
+    //alert("można kupić "+$_item+" "+$_object);
     //$('#myForm').submit();
     ajaxTest();
     }
