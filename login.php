@@ -2,8 +2,9 @@
 <head>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
+<script src='classes.js'></script>
 <link rel = 'stylesheet' type = 'text/css' href = 'styles.css' />
-<?php include 'database_update.php';?>
+<?php //include 'database_update.php';?>
 
 </head>
 <body>
@@ -17,7 +18,7 @@
     <input type='text' id='autoPowrot' name='autoPowrot' value='0'><br>
 </form>
 <?php
-include 'draw_shop.php';
+//include 'draw_shop.php';
 ?>
 <div class="rows">
     <div class="character_wrapper">
@@ -54,6 +55,9 @@ include 'draw_shop.php';
 </div>
 <script>
 var uczen_pobrany = <?php echo json_encode($uczen_pobrany); ?>;
+var monety = 0 ;
+var wartosc_postaci = 0;
+
 
 $('.przycisk').click(function( event ) {
   //event.target.nodeName
@@ -134,7 +138,7 @@ function CheckBuyAvailibility($_item,$_object){
     {
     //alert("można kupić "+$_item+" "+$_object);
     //$('#myForm').submit();
-    ajaxTest();
+    sell_buy();
     }
     else{
         SellPopup($_item,$_object);
@@ -151,7 +155,7 @@ if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłoży
       $('#sellbuy').val('sell');
       $('#autoPowrot').val('1');
       //$('#myForm').submit();
-      ajaxTest();
+      sell_buy();
 } else {
 
 }
@@ -160,10 +164,12 @@ if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłoży
 $( document ).ready(function() {
     $( "input[select=base]").click();
     $( "input[itemtype=base][itemid=1]").click();
+    coins_update();
+    user_create();
 });
 
 
-function ajaxTest() {
+function sell_buy() { //Skrypt kupująco/sprzedający
 
           var login ='Jakub';
           var password = 'Adamus';
@@ -172,13 +178,61 @@ function ajaxTest() {
           var id = $('#id').val();
           var autoPowrot = $('#autoPowrot').val();
            $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
-             //alert(data);
              location.reload();
            });
            return false;
 
       };
 
+
+function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
+    var login ='Jakub';
+    var password = 'Adamus';
+    $.get('coins_update.php',{login:login,password:password}, function(data){alert(data);
+    monety = (data);
+    });
+    return false;
+};
+
+function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuje. Zwraca nam ekwipunek ucznia
+    var login ='Jakub';
+    var password = 'Adamus';
+    $.get('user_create.php',{login:login,password:password}, function(data){alert(data);
+    uczen_value(data);
+    uczen_pobrany = JSON.parse(data);
+    });
+    return false;
+};
+
+function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
+    var login ='Jakub';
+    var password = 'Adamus';
+    var uczen_pobrany = _uczen_pobrany;
+    $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){alert(data);
+    wartosc_postaci = (data);
+
+    var mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
+
+    
+    alert("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
+
+    });
+    return false;
+};
+
+
+
+function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
+    var login ='Jakub';
+    var password = 'Adamus';
+    $.get('armory_create.php',{login:login,password:password}, function(data){alert(data);
+
+    var armory = JSON.parse(data);
+
+    alert(armory.helmet_array[1].name);
+    });
+    return false;
+};
 
 </script>
 
@@ -187,3 +241,5 @@ function ajaxTest() {
 
 </body>
 </html>
+
+ 

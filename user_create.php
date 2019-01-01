@@ -1,4 +1,15 @@
 <?php
+//=================================================== PODŁĄCZENIE DO BAZY DANYCH =============================================//
+$user = 'jakubadamus';
+$DBpassword = 'Kubaadamus1991';
+$db = 'jakubadamus';
+$host = 'mysql.cba.pl';
+$port = 3360;
+$database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
+
+$login = ($_GET["login"]);
+$password = ($_GET["password"]);
+
 //=================================================== STWORZENIE OBIEKTU UCZNIA =============================================//
 
 $sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
@@ -12,6 +23,6 @@ if($success>0)
     }
 }
 
-echo "<br>".json_encode($uczen_pobrany);
+echo json_encode($uczen_pobrany);
 
 ?>

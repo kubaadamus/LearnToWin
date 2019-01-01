@@ -1,11 +1,26 @@
 <?php
+//=================================================== PODŁĄCZENIE DO BAZY DANYCH =============================================//
+$user = 'jakubadamus';
+$DBpassword = 'Kubaadamus1991';
+$db = 'jakubadamus';
+$host = 'mysql.cba.pl';
+$port = 3360;
+$database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
+
+$login = ($_GET["login"]);
+$password = ($_GET["password"]);
+$uczen_pobrany = ($_GET["uczen_pobrany"]);
+
+$obj = (json_decode($uczen_pobrany));
+
+
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
 $elements = array("base","helmet","torso","gloves","pants","boots","weapon");
 foreach ($elements as $value)
 {
 
-    $sql = "SELECT * FROM $value WHERE ID =".$uczen_pobrany->$value;
+    $sql = "SELECT * FROM $value WHERE ID =".$obj->$value;
     //echo $sql;
     $result = mysqli_query($database,$sql);
     $success = mysqli_num_rows($result);
@@ -21,9 +36,6 @@ foreach ($elements as $value)
         //echo "<br> $value nie kupione.";
     }
 }
-$spendable_coins = $coins-$wartosc_postaci;
 
-
-echo "<br>aktualna wartosc postaci to: ".$wartosc_postaci;
-echo "<br> Możesz wydać: ".($spendable_coins)."<br>";
+echo $wartosc_postaci;
 ?>

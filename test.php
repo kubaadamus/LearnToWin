@@ -11,14 +11,6 @@ $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . m
 $login = ($_POST["login"]);
 $password = ($_POST["password"]);
 
-echo "Status podłączenia do bazy danych: ";
-
-if ($database) {
-  echo 'conected';
-} else {
-  echo 'not conected';
-}
-echo "<br> qfaaaaaa";
 
 echo $login;
 
