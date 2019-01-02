@@ -87,6 +87,7 @@ $( document ).ready(function() {
     user_create();
 
 
+
 });
 
 
@@ -94,7 +95,8 @@ $( document ).ready(function() {
 function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('coins_update.php',{login:login,password:password}, function(data){console.log(data);
+    $.get('coins_update.php',{login:login,password:password}, function(data){
+        console.log(data);
     monety = (data);
     });
     return false;
@@ -103,7 +105,8 @@ function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy któr
 function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuje. Zwraca nam ekwipunek ucznia
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('user_create.php',{login:login,password:password}, function(data){console.log(data);
+    $.get('user_create.php',{login:login,password:password}, function(data){
+        console.log(data);
     uczen_value(data);
 
     uczen_pobrany = JSON.parse(data);
@@ -117,7 +120,8 @@ function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, ż
     var password = 'Adamus';
     var uczen_pobrany = _uczen_pobrany;
 
-    $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){console.log(data);
+    $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){
+        console.log(data);
     var wartosc_postaci = (data);
 
     mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
@@ -134,7 +138,8 @@ function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, ż
 function armory_create(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('armory_create.php',{login:login,password:password}, function(data){console.log(data);
+    $.get('armory_create.php',{login:login,password:password}, function(data){
+        console.log(data);
 
     armory = JSON.parse(data);
     armory_draw(armory);
@@ -144,6 +149,9 @@ function armory_create(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, 
 };
 
 function armory_draw(_armory){
+
+    $( ".shop_container" ).children().remove();
+
 
     $( ".shop_container" ).append( "<div class='item_group' itemClass='base'> " );
     for(var i=0; i<_armory.base_array.length; i++){$( "div[itemClass=base]" ).append( "<input style='background-image:url("+_armory.base_array[i].thumbnail+");' class='itemSelect' type='button' itemType='base' itemID='"+_armory.base_array[i].id+"'>");}
@@ -259,15 +267,13 @@ function CheckBuyAvailibility($_item,$_object){
     }
 }
 function SellPopup($_item,$_id) {
-if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłożyć?")) {
+console.log("Sprzedajemy "+$_item);
     $('#buyBtn').attr("item_name",$_item);
     $('#buyBtn').attr("item_id",$_id);
     $('#buyBtn').attr("sellbuy",'sell');
     $('#buyBtn').attr("autoPowrot",'1');
     sell_buy();
-} else {
 
-}
 }
 function sell_buy() { //Skrypt kupująco/sprzedający
 var login ='Jakub';
@@ -277,9 +283,10 @@ var id = $('#buyBtn').attr("item_id");
 var sellbuy = $('#buyBtn').attr("sellbuy");
 var autoPowrot = $('#buyBtn').attr("autoPowrot");
  $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
-   location.reload();
-
-   alert(data);
+    alert(data);
+    coins_update();
+    user_create();
+    armory = armory_create();
  });
  return false;
 

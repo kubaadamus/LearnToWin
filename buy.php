@@ -3,9 +3,6 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
 </head>
 </html>
-
-
-
 <?php
 //-------------------------------------- Ł Ą C Z E N I E  Z  B A Z Ą  D A N Y C H ------------------------------------------//
 $user = 'jakubadamus';
@@ -32,6 +29,7 @@ if ($database) {
 } else {
   echo 'not conected';
 }
+
 
 
 
@@ -125,9 +123,9 @@ foreach ($elements as $value)
     }
 }
 
-echo $wartosc_postaci;
-
-echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
+echo "<br> wartość postaci: ".$wartosc_postaci;
+$spendable_coins = $coins-$wartosc_postaci;
+echo "<br> Możesz wydać: ".($spendable_coins);
 
 
 
