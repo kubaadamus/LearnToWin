@@ -28,13 +28,15 @@
     </div>
 </div>
 </body>
-
 <script>
-
+//=================================================================== Z M I E N N E ==========================================================================//
+//hajsy
 var monety = 0 ;
 var wartosc_postaci = 0;
 var mozesz_wydac=0;
+//obiekt postaci
 var uczen_pobrany;
+//ekwipunek
 var armory ;
 var base_array;
 var torso_array;
@@ -43,13 +45,12 @@ var gloves_array;
 var pants_array;
 var weapon_array;
 var boots_array;
-
-
-
-
+//login i hasło
+var login = <?php echo "'".($_GET["login"])."'" ?>;
+var password = <?php echo "'".($_GET["password"])."'" ?>;
+//klasy
 class uczen_object
 {
- 
    constructor(_base=0, _helmet=0, _torso=0, _gloves=0, _pants=0, _boots=0, _weapon=0)
    {
       //Ekwipunek
@@ -74,82 +75,47 @@ class uczen_object
        debug_to_console("--------------------------------");
    }
 }
-
-
+//=================================================================== F U N K C J E ==========================================================================//
 $( document ).ready(function() {
-
     coins_update();
     user_create();
-
-
 });
-
-
-
 function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
-    var login ='Jakub';
-    var password = 'Adamus';
     $.get('coins_update.php',{login:login,password:password}, function(data){
         console.log(data);
     monety = (data);
     });
     return false;
 };
-
 function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuje. Zwraca nam ekwipunek ucznia
-    var login ='Jakub';
-    var password = 'Adamus';
     $.get('user_create.php',{login:login,password:password}, function(data){
         console.log(data);
     uczen_value(data);
-
     uczen_pobrany = JSON.parse(data);
-    
     });
     return false;
 };
-
-function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
-    var login ='Jakub';
-    var password = 'Adamus';
-    var uczen_pobrany = _uczen_pobrany;
-
+function uczen_value(uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
     $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){
         console.log(data);
-    var wartosc_postaci = (data);
-
+    wartosc_postaci = (data);
     mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
-
-    
-    console.log("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
-
     armory = armory_create();
-
+    console.log("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
     });
     return false;
 };
-
-
-
-function armory_create(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
-    var login ='Jakub';
-    var password = 'Adamus';
+function armory_create() {  // Pobiera ekwipunek z bazy danych
     $.get('armory_create.php',{login:login,password:password}, function(data){
         console.log(data);
-
     armory = JSON.parse(data);
     armory_draw(armory);
     return armory;
     });
     return false;
 };
-
 function armory_draw(_armory){
-
-
-
     $( ".shop_container" ).children().remove();
-
 
     $( ".shop_container" ).append( "<div class='item_group' itemClass='base'> " );
     for(var i=0; i<_armory.base_array.length; i++){$( "div[itemClass=base]" ).append( "<input style='background-image:url("+_armory.base_array[i].thumbnail+");' canAfford='"+((mozesz_wydac-_armory.base_array[i].price)>0? 'tru':'nope')+"' class='itemSelect' type='button' itemType='base' itemID='"+_armory.base_array[i].id+"'>");}
@@ -180,38 +146,16 @@ function armory_draw(_armory){
     for(var i=0; i<_armory.pants_array.length; i++){$( "div[itemClass=pants]" ).append( "<input style='background-image:url("+_armory.pants_array[i].thumbnail+");' canAfford='"+((mozesz_wydac-_armory.pants_array[i].price)>0? 'tru':'nope')+"' class='itemSelect' type='button' itemType='pants' itemID='"+_armory.pants_array[i].id+"'>");}
     $( ".shop_container" ).append( "</div>");
 
-
-
-
     $( "input[select=base]").click();
     $( "input[itemtype=base][itemid=1]").click();
-
-    
-
 }
-
-
-
-
-$(document).on('click', '.przycisk', function(event){ 
-  //event.target.nodeName
-  //alert($(event.target).attr('class'));
-  $('#sellbuy').attr('value',$(event.target).attr('sellbuy'));
-  $('#item').attr('value',$(event.target).attr('item_name'));
-  $('#id').attr('value',$(event.target).attr('item_id'));
-  $('#myForm').submit();
-});
-//Shop Items Select
-$(document).on('click', '.ShopSelectBtn', function(event){ 
+$(document).on('click', '.ShopSelectBtn', function(event){ //Shop Items Select
   $( "div[itemClass]" ).hide();
   $( "div[itemClass='"+$(event.target).attr('select')+"']" ).show();
-
 });
-//Select Specific Item
-$(document).on('click', 'input[itemid]', function(event){ 
-
-
+$(document).on('click', 'input[itemid]', function(event){ //Select Specific Item
 var object;
+
             if($(event.target).attr('itemType')=='base'){
                 object =armory.base_array[$(event.target).attr('itemID')-1];
             }
@@ -234,8 +178,6 @@ var object;
                 object =armory.weapon_array[$(event.target).attr('itemID')-1];
             }
             
-
-
       $('.item_thumbnail').css("background-image", "url("+object.thumbnail+")");
       $('.item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
       $('#buyBtn').attr("value","kup "+object.name+"");
@@ -246,7 +188,6 @@ var object;
       $('#buyBtn').show();
 });
 $(document).on('click', '#buyBtn', function(event){ 
-
 CheckBuyAvailibility('base',uczen_pobrany.base);
 CheckBuyAvailibility('helmet',uczen_pobrany.helmet);
 CheckBuyAvailibility('torso',uczen_pobrany.torso);
@@ -254,7 +195,6 @@ CheckBuyAvailibility('gloves',uczen_pobrany.gloves);
 CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
 CheckBuyAvailibility('boots',uczen_pobrany.boots);
 CheckBuyAvailibility('pants',uczen_pobrany.pants);
-
 });
 function CheckBuyAvailibility($_item,$_object){
     if($('#buyBtn').attr("item_name")==$_item) 
@@ -276,33 +216,19 @@ console.log("Sprzedajemy "+$_item);
     $('#buyBtn').attr("sellbuy",'sell');
     $('#buyBtn').attr("autoPowrot",'1');
     sell_buy();
-
-}
+};
 function sell_buy() { //Skrypt kupująco/sprzedający
-var login ='Jakub';
-var password = 'Adamus';
 var item = $('#buyBtn').attr("item_name");
 var id = $('#buyBtn').attr("item_id");
 var sellbuy = $('#buyBtn').attr("sellbuy");
 var autoPowrot = $('#buyBtn').attr("autoPowrot");
- $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
+$.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
     //alert(data);
     coins_update();
     user_create();
     armory = armory_create();
  });
  return false;
-
 };
-
-
-
 </script>
-
-
-
-
-
 </html>
-
- 

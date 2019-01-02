@@ -6,20 +6,15 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-
 $login = ($_GET["login"]);
 $password = ($_GET["password"]);
 $uczen_pobrany = ($_GET["uczen_pobrany"]);
-
 $obj = (json_decode($uczen_pobrany));
-
-
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
 $elements = array("base","helmet","torso","gloves","pants","boots","weapon");
 foreach ($elements as $value)
 {
-
     $sql = "SELECT * FROM $value WHERE ID =".$obj->$value;
     //echo $sql;
     $result = mysqli_query($database,$sql);
@@ -36,7 +31,5 @@ foreach ($elements as $value)
         //echo "<br> $value nie kupione.";
     }
 }
-
 echo $wartosc_postaci;
-
 ?>

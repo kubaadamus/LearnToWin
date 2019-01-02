@@ -6,12 +6,8 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-
 $login = ($_POST["login"]);
 $password = ($_POST["password"]);
-
-
-
 //======================================== POBRANIE CAŁEGO UZBROJENIA Z BAZY DANYCH ===========================================//
 $elements = array("base","helmet", "torso","gloves","pants","boots","weapon");
 $base_array = array();
@@ -21,7 +17,6 @@ $gloves_array = array();
 $pants_array = array();
 $boots_array = array();
 $weapon_array = array();
-
 class armory{
     public $base_array = array();
     public $helmet_array = array();
@@ -42,23 +37,18 @@ class armory{
     }
 }
 class item_object{
-  
     function __construct($_id=0, $_name=0, $_price=0, $_defence=0, $_attack=0, $_thumbnail=0)
     {
- 
        $this->id = $_id;
        $this->name = $_name;
        $this->price = $_price;
        $this->defence = $_defence;
        $this->attack = $_attack;
        $this->thumbnail = $_thumbnail;
- 
     }
- }
-
+}
 foreach ($elements as $value)
 {
-
     $sql = "SELECT * FROM $value";
     $result = mysqli_query($database,$sql);
     $success = mysqli_num_rows($result);
@@ -97,12 +87,8 @@ foreach ($elements as $value)
         }
     }
     else{
-
     }
 }
-
 $obj = new armory($base_array,$helmet_array,$torso_array,$gloves_array,$pants_array,$boots_array,$weapon_array);
-
 echo json_encode($obj);
-
 ?>

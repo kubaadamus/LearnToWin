@@ -10,11 +10,9 @@
     background-color: darkgrey;
     position: relative;
     justify-content: space-between;
-
 }
 .character_wrapper{
     background-color: brown;
-
     flex-grow: 2;
 }
 .item_container{
@@ -28,7 +26,6 @@
 width: 200px;
 height: 200px;
 background-color: darkgrey;
-
 }
 .item_properties{
 width:200px;
@@ -60,18 +57,14 @@ overflow: auto;
 .itemSelect{
     width:100px;
     height:100px;
-
 }
-
 div[itemClass]
 {
 display: none;
 }
-
 .hidden{
     display: none;
 }
-
 input[canafford=nope]{
 border: 5px solid red;
 }
