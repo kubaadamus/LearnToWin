@@ -71,3 +71,7 @@ display: none;
 .hidden{
     display: none;
 }
+
+input[canafford=nope]{
+border: 5px solid red;
+}

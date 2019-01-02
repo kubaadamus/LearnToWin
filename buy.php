@@ -184,6 +184,12 @@ echo "<br> Uczeń po modyfikacjach".json_encode($uczen_pobrany)."</br>";
 $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_pobrany)."' WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
    mysqli_query($database, $sql_updateUczen); 
 
+   $sql_updateUczen = "UPDATE uczniowie SET wartosc_postaci = $wartosc_postaci WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+   mysqli_query($database, $sql_updateUczen); 
+
+   $sql_updateUczen = "UPDATE uczniowie SET spendable_coins = $spendable_coins WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+   mysqli_query($database, $sql_updateUczen); 
+
     echo "
     <form id='myForm' action='login.php'>
 <input type='text' id='login' name='login' value='$login'><br><br>
