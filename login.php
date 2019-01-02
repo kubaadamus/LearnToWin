@@ -2,24 +2,11 @@
 <head>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'></script>
-<script src='classes.js'></script>
 <link rel = 'stylesheet' type = 'text/css' href = 'styles.css' />
-<?php //include 'database_update.php';?>
 
 </head>
 <body>
 
-<form class="hidden" id='myForm' action='buy.php' style="">
-    <input type='text' id='login' name='login' value='<?php echo $login ;?>'><br><br>
-    <input type='text' id='password' name='password' value='<?php echo $password ;?>'><br><br>
-    <input type='text' id='sellbuy' name='sellbuy' value='sell/buy'><br><br>
-    <input type='text' id='item' name='item' value='item_name'><br>
-    <input type='text' id='id' name='id' value='item_id'><br>
-    <input type='text' id='autoPowrot' name='autoPowrot' value='0'><br>
-</form>
-<?php
-//include 'draw_shop.php';
-?>
 <div class="rows">
     <div class="character_wrapper">
         
@@ -28,7 +15,7 @@
         <div class="item_container">
             <div class="item_thumbnail" ></div>
             <div class="item_properties" ></div>
-            <input class="buyBtn" id="buyBtn" type='button' value='kup' sellbuy='buy' item_name='name' item_id='id' >
+            <input class="buyBtn" id="buyBtn" type='button' value='kup' item_name='name' item_id='id' sellbuy='buy' autoPowrot="0">
         </div>
         <div class="storage_wrapper">
             <input class="ShopSelectBtn" type="button" value=" bases" select="base">
@@ -41,154 +28,73 @@
         </div>
 
         <div class="shop_container">
-        <?php DrawAllGear($base_array,'base',$spendable_coins);?>
-        <?php DrawAllGear($weapon_array,'weapon',$spendable_coins);?>
-        <?php DrawAllGear($torso_array,'torso',$spendable_coins);?>
-        <?php DrawAllGear($boots_array,'boots',$spendable_coins);?>
+            
+                
+            
 
-        <?php DrawAllGear($helmet_array,'helmet',$spendable_coins);?>
-        <?php DrawAllGear($gloves_array,'gloves',$spendable_coins);?>
-        <?php DrawAllGear($pants_array,'pants',$spendable_coins);?>
         </div>
     </div>
 
 </div>
 <script>
-var uczen_pobrany = <?php echo json_encode($uczen_pobrany); ?>;
 var monety = 0 ;
 var wartosc_postaci = 0;
+var uczen_pobrany;
+var armory = armory_create();
+var base_array;
+var torso_array;
+var helmet_array;
+var gloves_array;
+var pants_array;
+var weapon_array;
+var boots_array;
+var mozesz_wydac=0;
 
 
-$('.przycisk').click(function( event ) {
-  //event.target.nodeName
-  //alert($(event.target).attr('class'));
-  $('#sellbuy').attr('value',$(event.target).attr('sellbuy'));
-  $('#item').attr('value',$(event.target).attr('item_name'));
-  $('#id').attr('value',$(event.target).attr('item_id'));
-  $('#myForm').submit();
-});
-//Shop Items Select
-$('.ShopSelectBtn').click(function( event ) {
-  $( "div[itemClass]" ).hide();
-  $( "div[itemClass='"+$(event.target).attr('select')+"']" ).show();
 
-});
-//Select Specific Item
-$('.itemSelect').click(function( event ) {
-      //alert($(event.target).attr('class'));
-
-        var baseArray = <?php echo json_encode($base_array); ?>;
-        var helmet_array = <?php echo json_encode($helmet_array); ?>;
-        var torso_array = <?php echo json_encode($torso_array); ?>;
-        var gloves_array = <?php echo json_encode($gloves_array); ?>;
-        var pants_array = <?php echo json_encode($pants_array); ?>;
-        var boots_array = <?php echo json_encode($boots_array); ?>;
-        var weapon_array = <?php echo json_encode($weapon_array); ?>;
-
-        var object;
-
-            if($(event.target).attr('itemType')=='base'){
-                object =baseArray[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='helmet'){
-                object =helmet_array[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='torso'){
-                object =torso_array[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='gloves'){
-                object =gloves_array[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='pants'){
-                object =pants_array[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='boots'){
-                object =boots_array[$(event.target).attr('itemID')-1];
-            }
-            if($(event.target).attr('itemType')=='weapon'){
-                object =weapon_array[$(event.target).attr('itemID')-1];
-            }
-
-      $('.item_thumbnail').css("background-image", "url("+object.thumbnail+")");
-
-      $('.item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
-      $('#buyBtn').attr("value","kup "+object.name+"");
-      $('#item').val($(event.target).attr('itemType'));
-      $('#id').val($(event.target).attr('itemID'));
-      $('#sellbuy').val('buy');
-      $('#autoPowrot').val('0');
-      $('#buyBtn').show();
-});
-$('#buyBtn').click(function( event ) {
-
-CheckBuyAvailibility('base',uczen_pobrany.base);
-CheckBuyAvailibility('helmet',uczen_pobrany.helmet);
-CheckBuyAvailibility('torso',uczen_pobrany.torso);
-CheckBuyAvailibility('gloves',uczen_pobrany.gloves);
-CheckBuyAvailibility('pants',uczen_pobrany.pants);
-CheckBuyAvailibility('boots',uczen_pobrany.boots);
-CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
-
-});
-
-function CheckBuyAvailibility($_item,$_object){
-    if($('#item').val()==$_item)
+class uczen_object
 {
-    if($_object==0)
-    {
-    //alert("można kupić "+$_item+" "+$_object);
-    //$('#myForm').submit();
-    sell_buy();
-    }
-    else{
-        SellPopup($_item,$_object);
+ 
+   constructor(_base=0, _helmet=0, _torso=0, _gloves=0, _pants=0, _boots=0, _weapon=0)
+   {
+      //Ekwipunek
+      this.base = _base;
+      this.helmet = _helmet;
+      this.torso = _torso;
+      this.gloves = _gloves;
+      this.pants = _pants;
+      this.boots = _boots;
+      this.weapon = _weapon;
+      //this.wypisz();
+   }
+   wypisz(){
+       //Ekwipunek
+       debug_to_console("base:".this.base);
+       debug_to_console("helmet:".this.helmet);
+       debug_to_console("torso:".this.torso);
+       debug_to_console("gloves:".this.gloves);
+       debug_to_console("pants:".this.pants);
+       debug_to_console("boots:".this.boots);
+       debug_to_console("weapon:".this.weapon);
+       debug_to_console("--------------------------------");
+   }
 }
 
-}
-}
-  
-function SellPopup($_item,$_id) {
-
-if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłożyć?")) {
-      $('#item').val($_item);
-      $('#id').val($_id);
-      $('#sellbuy').val('sell');
-      $('#autoPowrot').val('1');
-      //$('#myForm').submit();
-      sell_buy();
-} else {
-
-}
-}
 
 $( document ).ready(function() {
-    $( "input[select=base]").click();
-    $( "input[itemtype=base][itemid=1]").click();
+
     coins_update();
     user_create();
+
+
 });
 
-
-function sell_buy() { //Skrypt kupująco/sprzedający
-
-          var login ='Jakub';
-          var password = 'Adamus';
-          var sellbuy = $('#sellbuy').val();
-          var item = $('#item').val();
-          var id = $('#id').val();
-          var autoPowrot = $('#autoPowrot').val();
-           $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
-             location.reload();
-           });
-           return false;
-
-      };
 
 
 function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('coins_update.php',{login:login,password:password}, function(data){alert(data);
+    $.get('coins_update.php',{login:login,password:password}, function(data){console.log(data);
     monety = (data);
     });
     return false;
@@ -197,9 +103,11 @@ function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy któr
 function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuje. Zwraca nam ekwipunek ucznia
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('user_create.php',{login:login,password:password}, function(data){alert(data);
+    $.get('user_create.php',{login:login,password:password}, function(data){console.log(data);
     uczen_value(data);
+
     uczen_pobrany = JSON.parse(data);
+    
     });
     return false;
 };
@@ -208,13 +116,14 @@ function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, ż
     var login ='Jakub';
     var password = 'Adamus';
     var uczen_pobrany = _uczen_pobrany;
-    $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){alert(data);
-    wartosc_postaci = (data);
 
-    var mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
+    $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){console.log(data);
+    var wartosc_postaci = (data);
+
+    mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
 
     
-    alert("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
+    console.log("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
 
     });
     return false;
@@ -222,17 +131,161 @@ function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, ż
 
 
 
-function uczen_value(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
+function armory_create(_uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
     var login ='Jakub';
     var password = 'Adamus';
-    $.get('armory_create.php',{login:login,password:password}, function(data){alert(data);
+    $.get('armory_create.php',{login:login,password:password}, function(data){console.log(data);
 
-    var armory = JSON.parse(data);
-
-    alert(armory.helmet_array[1].name);
+    armory = JSON.parse(data);
+    armory_draw(armory);
+    return armory;
     });
     return false;
 };
+
+function armory_draw(_armory){
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='base'> " );
+    for(var i=0; i<_armory.base_array.length; i++){$( "div[itemClass=base]" ).append( "<input style='background-image:url("+_armory.base_array[i].thumbnail+");' class='itemSelect' type='button' itemType='base' itemID='"+_armory.base_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='torso'> " );
+    for(var i=0; i<_armory.torso_array.length; i++){$( "div[itemClass=torso]" ).append( "<input style='background-image:url("+_armory.torso_array[i].thumbnail+");' class='itemSelect' type='button' itemType='torso' itemID='"+_armory.torso_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='weapon'> " );
+    for(var i=0; i<_armory.weapon_array.length; i++){$( "div[itemClass=weapon]" ).append( "<input style='background-image:url("+_armory.weapon_array[i].thumbnail+");' class='itemSelect' type='button' itemType='weapon' itemID='"+_armory.weapon_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+    
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='boots'> " );
+    for(var i=0; i<_armory.boots_array.length; i++){$( "div[itemClass=boots]" ).append( "<input style='background-image:url("+_armory.boots_array[i].thumbnail+");' class='itemSelect' type='button' itemType='boots' itemID='"+_armory.boots_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='helmet'> " );
+    for(var i=0; i<_armory.helmet_array.length; i++){$( "div[itemClass=helmet]" ).append( "<input style='background-image:url("+_armory.helmet_array[i].thumbnail+");' class='itemSelect' type='button' itemType='helmet' itemID='"+_armory.helmet_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='gloves'> " );
+    for(var i=0; i<_armory.gloves_array.length; i++){$( "div[itemClass=gloves]" ).append( "<input style='background-image:url("+_armory.gloves_array[i].thumbnail+");' class='itemSelect' type='button' itemType='gloves' itemID='"+_armory.gloves_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+    $( ".shop_container" ).append( "<div class='item_group' itemClass='pants'> " );
+    for(var i=0; i<_armory.pants_array.length; i++){$( "div[itemClass=pants]" ).append( "<input style='background-image:url("+_armory.pants_array[i].thumbnail+");' class='itemSelect' type='button' itemType='pants' itemID='"+_armory.pants_array[i].id+"'>");}
+    $( ".shop_container" ).append( "</div>");
+
+
+    $( "input[select=base]").click();
+    $( "input[itemtype=base][itemid=1]").click();
+
+}
+
+
+
+
+$(document).on('click', '.przycisk', function(event){ 
+  //event.target.nodeName
+  //alert($(event.target).attr('class'));
+  $('#sellbuy').attr('value',$(event.target).attr('sellbuy'));
+  $('#item').attr('value',$(event.target).attr('item_name'));
+  $('#id').attr('value',$(event.target).attr('item_id'));
+  $('#myForm').submit();
+});
+//Shop Items Select
+$(document).on('click', '.ShopSelectBtn', function(event){ 
+  $( "div[itemClass]" ).hide();
+  $( "div[itemClass='"+$(event.target).attr('select')+"']" ).show();
+
+});
+//Select Specific Item
+$(document).on('click', 'input[itemid]', function(event){ 
+
+
+var object;
+            if($(event.target).attr('itemType')=='base'){
+                object =armory.base_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='helmet'){
+                object =armory.helmet_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='torso'){
+                object =armory.torso_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='gloves'){
+                object =armory.gloves_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='pants'){
+                object =armory.pants_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='boots'){
+                object =armory.boots_array[$(event.target).attr('itemID')-1];
+            }
+            if($(event.target).attr('itemType')=='weapon'){
+                object =armory.weapon_array[$(event.target).attr('itemID')-1];
+            }
+            
+
+
+      $('.item_thumbnail').css("background-image", "url("+object.thumbnail+")");
+      $('.item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
+      $('#buyBtn').attr("value","kup "+object.name+"");
+      $('#buyBtn').attr("item_name",$(event.target).attr('itemType'));
+      $('#buyBtn').attr("item_id",$(event.target).attr('itemID'));
+      $('#buyBtn').attr("sellbuy",'buy');
+      $('#buyBtn').attr("autoPowrot",'1');
+      $('#buyBtn').show();
+});
+$(document).on('click', '#buyBtn', function(event){ 
+
+CheckBuyAvailibility('base',uczen_pobrany.base);
+CheckBuyAvailibility('helmet',uczen_pobrany.helmet);
+CheckBuyAvailibility('torso',uczen_pobrany.torso);
+CheckBuyAvailibility('gloves',uczen_pobrany.gloves);
+CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
+CheckBuyAvailibility('boots',uczen_pobrany.boots);
+CheckBuyAvailibility('pants',uczen_pobrany.pants);
+
+});
+function CheckBuyAvailibility($_item,$_object){
+    if($('#buyBtn').attr("item_name")==$_item) 
+    {
+        if($_object==0) // jeśli nie masz to możesz kupić
+        {
+        sell_buy();
+        }
+        else
+        {
+            SellPopup($_item,$_object); // w przeciwnym razie odłóż
+        }
+    }
+}
+function SellPopup($_item,$_id) {
+if (confirm("Aby zakupić nowy "+$_item+", musisz odłożyć poprzedni. Odłożyć?")) {
+    $('#buyBtn').attr("item_name",$_item);
+    $('#buyBtn').attr("item_id",$_id);
+    $('#buyBtn').attr("sellbuy",'sell');
+    $('#buyBtn').attr("autoPowrot",'1');
+    sell_buy();
+} else {
+
+}
+}
+function sell_buy() { //Skrypt kupująco/sprzedający
+var login ='Jakub';
+var password = 'Adamus';
+var item = $('#buyBtn').attr("item_name");
+var id = $('#buyBtn').attr("item_id");
+var sellbuy = $('#buyBtn').attr("sellbuy");
+var autoPowrot = $('#buyBtn').attr("autoPowrot");
+ $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
+   location.reload();
+
+   alert(data);
+ });
+ return false;
+
+};
+
+
 
 </script>
 

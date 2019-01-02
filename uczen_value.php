@@ -38,4 +38,5 @@ foreach ($elements as $value)
 }
 
 echo $wartosc_postaci;
+
 ?>

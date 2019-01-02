@@ -22,15 +22,16 @@ $autoPowrot = ($_GET["autoPowrot"]);
 
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
 
-echo "Status podłączenia do bazy danych: ";
+echo "
+Status podłączenia do bazy danych: 
+";
 if ($database) {
-  echo 'conected';
+  echo '
+  conected
+  ';
 } else {
   echo 'not conected';
 }
-echo "<br> WTFFFFFFF";
-
-echo $login." ".$password;
 
 
 
@@ -96,16 +97,18 @@ class uczen_object
         }
     }
 
-//echo "<br>".json_encode($uczen_pobrany);
+echo "
+Uczeń przed modyfikacjami: ".json_encode($uczen_pobrany)."
+";
 
 
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
-$elements = array("base","helmet", "torso","gloves",);
+$elements = array("base","helmet","torso","gloves","pants","boots","weapon");
 foreach ($elements as $value)
 {
 
-    $sql = "SELECT * FROM $value WHERE ID =".$uczen_pobrany->$value;
+    $sql = "SELECT * FROM $value WHERE ID =".$obj->$value;
     //echo $sql;
     $result = mysqli_query($database,$sql);
     $success = mysqli_num_rows($result);
@@ -122,13 +125,10 @@ foreach ($elements as $value)
     }
 }
 
-//echo "<br>wartosc postaci: ".$wartosc_postaci;
+echo $wartosc_postaci;
 
-//echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
+echo "<br> Możesz wydać: ".($coins-$wartosc_postaci);
 
-
-
-include 'uczen_value.php';
 
 
 
@@ -145,7 +145,7 @@ if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
     {
 
         $sql = "SELECT * FROM $item WHERE ID =".$id;
-        //echo "<br>".$sql."<br>";
+        echo "<br>".$sql."<br>";
         $result = mysqli_query($database,$sql);
         $success = mysqli_num_rows($result);
         if($success>0)
@@ -181,7 +181,7 @@ if($sell_buy=='buy') // czy kupujemy czy sprzedajemy
 }
 
 
-//echo "<br>".json_encode($uczen_pobrany);
+echo "<br> Uczeń po modyfikacjach".json_encode($uczen_pobrany)."</br>";
 
 $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_pobrany)."' WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
    mysqli_query($database, $sql_updateUczen); 
@@ -193,6 +193,8 @@ $sql_updateUczen = "UPDATE uczniowie SET uczen_object = '".json_encode($uczen_po
   <input type='submit' value='Powrót'>
 </form>
 ";
+
+
 
 ?>
 

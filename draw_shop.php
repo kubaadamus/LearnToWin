@@ -18,10 +18,10 @@ for($i=0; $i<5; $i++)
     {
         if($_spendable>=$value->price)
         {
-            echo "<input style='background-image:url($value->thumbnail);' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
+            echo "<input style='background-image:url($value->thumbnail);' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";
         }
         else{
-            echo "<input style='background-image:url($value->thumbnail);border:2px solid red' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";;
+            echo "<input style='background-image:url($value->thumbnail);border:2px solid red' class='itemSelect' type='button' itemType='$_name' itemID='$value->id'>";
         }
         
     }
