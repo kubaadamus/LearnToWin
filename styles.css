@@ -12,25 +12,28 @@
     justify-content: space-between;
 }
 
-.item_container{
+.column{
     background-color: lightgreen;
     display: flex;
     flex-direction: column;
     width: fit-content;
     margin:0 auto;
 }
-.item_thumbnail{
+.item_container{
+display: flex;
+flex-direction: row;
+}
+.item_thumbnail, .compare_item_thumbnail{
 width: 200px;
 height: 200px;
 background-color: darkgrey;
 }
-.item_properties{
+.item_properties, .compare_item_properties{
 width:200px;
 height:200px;
 background-color: red;
 }
 .buyBtn{
-    width:100px;
     height:30px;
     background-color: yellow;
     align-self: center;
@@ -130,4 +133,21 @@ canvas{
     top:100%;
     left:50%;
     transform:translate(-50%,-100%);
+}
+.character_bar{
+    width:100px;
+    height:20px;
+    background-color: darkgrey;
+    position: absolute;
+    top:100%;
+    left:50%;
+    transform:translateX(-50%);
+}
+.character_bar_inside{
+    height:20px;
+    width:20px;
+    background-color: red;
+    position: absolute;
+    left:0px;
+    text-align: center;
 }

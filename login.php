@@ -11,22 +11,30 @@
             <div class="character_avatar">
                 <img src="assets/character/doll.png" id="character_base_thumbnail" alt="">
             </div>
-            <input id="character_helmet_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-            <input id="character_torso_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-            <input id="character_gloves_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-            <input id="character_pants_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-            <input id="character_boots_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-            <input id="character_weapon_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
-
-
+            <input id="character_helmet_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <input id="character_torso_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <input id="character_gloves_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <input id="character_pants_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <input id="character_boots_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <input id="character_weapon_thumbnail" style="" canafford="tru" class="itemSelect sellIt" type="button" itemtype="base" itemid="1" compare="1">
+            <div class="character_bar">
+                <div class="character_bar_inside"></div>
+            </div>
         </div>
+        
     </div>
     <div class="columns">
         <div class="item_container">
-            <div class="item_thumbnail" ></div>
-            <div class="item_properties" ></div>
-            <input class="buyBtn" id="buyBtn" type='button' value='kup' item_name='name' item_id='id' sellbuy='buy' autoPowrot="0">
+        <div class="column">
+            <div class="compare_item_thumbnail" ></div>
+                <div class="compare_item_properties" ></div>
+            </div>
+            <div class="column">
+                <div class="item_thumbnail" ></div>
+                <div class="item_properties" ></div>
+            </div>
         </div>
+        <input class="buyBtn" id="buyBtn" type='button' value='kup' item_name='name' item_id='id' sellbuy='buy' autoPowrot="0">
         <div class="storage_wrapper">
             <input class="ShopSelectBtn" type="button" value=" bases" select="base">
             <input class="ShopSelectBtn" type="button" value=" torsos" select="torso">
@@ -96,6 +104,9 @@ class uczen_object
 $( document ).ready(function() {
     coins_update();
     user_create();
+    $('#buyBtn').attr("disabled","true");
+    $('#buyBtn').attr("value","...");
+
 });
 function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
     $.get('coins_update.php',{login:login,password:password}, function(data){
@@ -106,7 +117,6 @@ function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy któr
 };
 function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuje. Zwraca nam ekwipunek ucznia
     $.get('user_create.php',{login:login,password:password}, function(data){
-        console.log(data);
     uczen_value(data);
     uczen_pobrany = JSON.parse(data);
 
@@ -166,7 +176,7 @@ function armory_draw(_armory){
     $( ".shop_container" ).append( "</div>");
 
     lastOpenedShop.click();
-    lastOpenedItem.click();
+    //lastOpenedItem.click();
 }
 $(document).on('click', '.ShopSelectBtn', function(event){ //Shop Items Select
   $( "div[itemClass]" ).hide();
@@ -174,9 +184,9 @@ $(document).on('click', '.ShopSelectBtn', function(event){ //Shop Items Select
   lastOpenedShop = event.target;
 });
 $(document).on('click', 'input[itemid]', function(event){ //Select Specific Item
-    lastOpenedItem = event.target;
-var object;
 
+        lastOpenedItem = event.target;
+        var object;
             if($(event.target).attr('itemType')=='base'){
                 object =armory.base_array[$(event.target).attr('itemID')-1];
             }
@@ -198,7 +208,24 @@ var object;
             if($(event.target).attr('itemType')=='weapon'){
                 object =armory.weapon_array[$(event.target).attr('itemID')-1];
             }
-            
+
+    if($(event.target).attr("compare")=="1")
+    {
+        if(object)
+        {
+            $('.compare_item_thumbnail').css("background-image", "url("+object.thumbnail+")");
+            $('.compare_item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
+            $('#buyBtn').attr("value","kup "+object.name+"");
+            $('#buyBtn').attr("item_name",$(event.target).attr('itemType'));
+            $('#buyBtn').attr("item_id",$(event.target).attr('itemID'));
+            $('#buyBtn').attr("sellbuy",'buy');
+            $('#buyBtn').attr("autoPowrot",'1');
+
+            $('#buyBtn').removeAttr("disabled");
+        }
+    }
+    else
+    {
       $('.item_thumbnail').css("background-image", "url("+object.thumbnail+")");
       $('.item_properties').html( object.id+" "+object.name+" "+object.price+" "+object.defence+" "+object.attack );
       $('#buyBtn').attr("value","kup "+object.name+"");
@@ -206,8 +233,14 @@ var object;
       $('#buyBtn').attr("item_id",$(event.target).attr('itemID'));
       $('#buyBtn').attr("sellbuy",'buy');
       $('#buyBtn').attr("autoPowrot",'1');
-      $('#buyBtn').show();
-      
+      $('#buyBtn').removeAttr("disabled");
+    }
+
+    
+   
+});
+$(document).on('click', '.sellIt', function(event){ 
+    $('#buyBtn').attr("value","sprzedaj "+$(event.target).attr('itemtype')+" "+$(event.target).attr('itemid'));
 });
 $(document).on('click', '#buyBtn', function(event){ 
 CheckBuyAvailibility('base',uczen_pobrany.base);
@@ -217,6 +250,7 @@ CheckBuyAvailibility('gloves',uczen_pobrany.gloves);
 CheckBuyAvailibility('weapon',uczen_pobrany.weapon);
 CheckBuyAvailibility('boots',uczen_pobrany.boots);
 CheckBuyAvailibility('pants',uczen_pobrany.pants);
+
 });
 function CheckBuyAvailibility($_item,$_object){
     if($('#buyBtn').attr("item_name")==$_item) 
@@ -245,17 +279,33 @@ var id = $('#buyBtn').attr("item_id");
 var sellbuy = $('#buyBtn').attr("sellbuy");
 var autoPowrot = $('#buyBtn').attr("autoPowrot");
 $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
-
+    //console.log(data);
+    if(data.indexOf("true") >= 0)
+        {
+            console.log("Zakup się udał");
+        }
+        if(data.indexOf('false') >= 0)
+        {
+            console.log("Zakup się nie udał");
+        }
+        if(data.indexOf('Odkładamy') >= 0)
+        {
+            console.log("Odłożenie się udało");
+        }
     coins_update();
     user_create();
     armory = armory_create();
-
+    $('#buyBtn').attr("disabled","true");
+    $('#buyBtn').attr("value","...");
  });
  return false;
 };
+function characterBarUpdate() {
+    $('.character_bar_inside').attr("style","width:"+((wartosc_postaci/monety)*100)+"px");
+    $('.character_bar_inside').html(((wartosc_postaci/monety)*100).toPrecision(3));
+}
 
 function PostUpdatesCallback(){ // Funkcja która odpali się dopiero po zakonczeniu wszystkich asynchronicznych rzeczy
-
     if((uczen_pobrany.helmet)>0){
         $('#character_helmet_thumbnail').attr("style","background-image:url("+armory.helmet_array[uczen_pobrany.helmet-1].thumbnail+")");
         $('#character_helmet_thumbnail').attr("itemid",armory.helmet_array[uczen_pobrany.helmet-1].id);
@@ -310,8 +360,7 @@ function PostUpdatesCallback(){ // Funkcja która odpali się dopiero po zakoncz
         $('#character_weapon_thumbnail').attr("style","null");
         $('#character_weapon_thumbnail').attr("disabled","true");
     }
-    
-
+    characterBarUpdate();
 }
 </script>
 
