@@ -7,6 +7,19 @@
 <body>
 <div class="rows">
     <div class="character_wrapper">
+        <div class="character_frame">
+            <div class="character_avatar">
+                <img src="assets/character/doll.png" id="character_base_thumbnail" alt="">
+            </div>
+            <input id="character_helmet_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+            <input id="character_torso_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+            <input id="character_gloves_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+            <input id="character_pants_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+            <input id="character_boots_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+            <input id="character_weapon_thumbnail" style="" canafford="tru" class="itemSelect" type="button" itemtype="base" itemid="1">
+
+
+        </div>
     </div>
     <div class="columns">
         <div class="item_container">
@@ -29,6 +42,7 @@
 </div>
 </body>
 <script>
+
 //=================================================================== Z M I E N N E ==========================================================================//
 //hajsy
 var monety = 0 ;
@@ -48,6 +62,9 @@ var boots_array;
 //login i hasło
 var login = <?php echo "'".($_GET["login"])."'" ?>;
 var password = <?php echo "'".($_GET["password"])."'" ?>;
+//ostatnio wybrane menu - zeby po kupnie czegoś nie wracało zawsze do sklepiku z bazami tylko do ostatnio otwartego
+var lastOpenedShop = $( "input[select=base]");
+var lastOpenedItem = $( "input[itemtype=base][itemid=1]");
 //klasy
 class uczen_object
 {
@@ -82,7 +99,7 @@ $( document ).ready(function() {
 });
 function coins_update() { // Atktualizuje bazę danych i zwraca nam coinsy które możemy wydać
     $.get('coins_update.php',{login:login,password:password}, function(data){
-        console.log(data);
+        //console.log(data);
     monety = (data);
     });
     return false;
@@ -92,24 +109,26 @@ function user_create() {  // Pobiera nam ucznia z bazy danych jako Json i parsuj
         console.log(data);
     uczen_value(data);
     uczen_pobrany = JSON.parse(data);
+
     });
     return false;
 };
 function uczen_value(uczen_pobrany) {  // Zwraca aktualną wartość ucznia, żeby obliczyć na jej podstawie spendable coins
     $.get('uczen_value.php',{login:login,password:password,uczen_pobrany:uczen_pobrany}, function(data){
-        console.log(data);
+        //console.log(data);
     wartosc_postaci = (data);
     mozesz_wydac = parseFloat(monety)-parseFloat(wartosc_postaci);
     armory = armory_create();
-    console.log("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
+    //console.log("monety " + monety +" wartosc postaci "+ wartosc_postaci + " Możesz wydać: " + mozesz_wydac);
     });
     return false;
 };
 function armory_create() {  // Pobiera ekwipunek z bazy danych
     $.get('armory_create.php',{login:login,password:password}, function(data){
-        console.log(data);
+        //console.log(data);
     armory = JSON.parse(data);
     armory_draw(armory);
+    PostUpdatesCallback();
     return armory;
     });
     return false;
@@ -146,14 +165,16 @@ function armory_draw(_armory){
     for(var i=0; i<_armory.pants_array.length; i++){$( "div[itemClass=pants]" ).append( "<input style='background-image:url("+_armory.pants_array[i].thumbnail+");' canAfford='"+((mozesz_wydac-_armory.pants_array[i].price)>0? 'tru':'nope')+"' class='itemSelect' type='button' itemType='pants' itemID='"+_armory.pants_array[i].id+"'>");}
     $( ".shop_container" ).append( "</div>");
 
-    $( "input[select=base]").click();
-    $( "input[itemtype=base][itemid=1]").click();
+    lastOpenedShop.click();
+    lastOpenedItem.click();
 }
 $(document).on('click', '.ShopSelectBtn', function(event){ //Shop Items Select
   $( "div[itemClass]" ).hide();
   $( "div[itemClass='"+$(event.target).attr('select')+"']" ).show();
+  lastOpenedShop = event.target;
 });
 $(document).on('click', 'input[itemid]', function(event){ //Select Specific Item
+    lastOpenedItem = event.target;
 var object;
 
             if($(event.target).attr('itemType')=='base'){
@@ -186,6 +207,7 @@ var object;
       $('#buyBtn').attr("sellbuy",'buy');
       $('#buyBtn').attr("autoPowrot",'1');
       $('#buyBtn').show();
+      
 });
 $(document).on('click', '#buyBtn', function(event){ 
 CheckBuyAvailibility('base',uczen_pobrany.base);
@@ -210,7 +232,7 @@ function CheckBuyAvailibility($_item,$_object){
     }
 }
 function SellPopup($_item,$_id) {
-console.log("Sprzedajemy "+$_item);
+//console.log("Sprzedajemy "+$_item);
     $('#buyBtn').attr("item_name",$_item);
     $('#buyBtn').attr("item_id",$_id);
     $('#buyBtn').attr("sellbuy",'sell');
@@ -223,12 +245,74 @@ var id = $('#buyBtn').attr("item_id");
 var sellbuy = $('#buyBtn').attr("sellbuy");
 var autoPowrot = $('#buyBtn').attr("autoPowrot");
 $.get('buy.php',{login:login,password:password,sellbuy:sellbuy,item:item,id:id,autoPowrot:autoPowrot}, function(data){
-    //alert(data);
+
     coins_update();
     user_create();
     armory = armory_create();
+
  });
  return false;
 };
+
+function PostUpdatesCallback(){ // Funkcja która odpali się dopiero po zakonczeniu wszystkich asynchronicznych rzeczy
+
+    if((uczen_pobrany.helmet)>0){
+        $('#character_helmet_thumbnail').attr("style","background-image:url("+armory.helmet_array[uczen_pobrany.helmet-1].thumbnail+")");
+        $('#character_helmet_thumbnail').attr("itemid",armory.helmet_array[uczen_pobrany.helmet-1].id);
+        $('#character_helmet_thumbnail').attr("itemtype","helmet");
+        $('#character_helmet_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_helmet_thumbnail').attr("style","null");
+        $('#character_helmet_thumbnail').attr("disabled","true");
+    }
+    if((uczen_pobrany.torso)>0){
+        $('#character_torso_thumbnail').attr("style","background-image:url("+armory.torso_array[uczen_pobrany.torso-1].thumbnail+")");
+        $('#character_torso_thumbnail').attr("itemid",armory.torso_array[uczen_pobrany.torso-1].id);
+        $('#character_torso_thumbnail').attr("itemtype","torso");
+        $('#character_torso_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_torso_thumbnail').attr("style","null");
+        $('#character_torso_thumbnail').attr("disabled","true");
+    }
+    if((uczen_pobrany.gloves)>0){
+        $('#character_gloves_thumbnail').attr("style","background-image:url("+armory.gloves_array[uczen_pobrany.gloves-1].thumbnail+")");
+        $('#character_gloves_thumbnail').attr("itemid",armory.gloves_array[uczen_pobrany.gloves-1].id);
+        $('#character_gloves_thumbnail').attr("itemtype","gloves");
+        $('#character_gloves_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_gloves_thumbnail').attr("style","null");
+        $('#character_gloves_thumbnail').attr("disabled","true");
+    }
+    if((uczen_pobrany.pants)>0){
+        $('#character_pants_thumbnail').attr("style","background-image:url("+armory.pants_array[uczen_pobrany.pants-1].thumbnail+")");
+        $('#character_pants_thumbnail').attr("itemid",armory.pants_array[uczen_pobrany.pants-1].id);
+        $('#character_pants_thumbnail').attr("itemtype","pants");
+        $('#character_pants_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_pants_thumbnail').attr("style","null");
+        $('#character_pants_thumbnail').attr("disabled","true");
+    }
+    if((uczen_pobrany.boots)>0){
+        $('#character_boots_thumbnail').attr("style","background-image:url("+armory.boots_array[uczen_pobrany.boots-1].thumbnail+")");
+        $('#character_boots_thumbnail').attr("itemid",armory.boots_array[uczen_pobrany.boots-1].id);
+        $('#character_boots_thumbnail').attr("itemtype","boots");
+        $('#character_boots_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_boots_thumbnail').attr("style","null");
+        $('#character_boots_thumbnail').attr("disabled","true");
+    }
+        if((uczen_pobrany.weapon)>0){
+        $('#character_weapon_thumbnail').attr("style","background-image:url("+armory.weapon_array[uczen_pobrany.weapon-1].thumbnail+")");
+        $('#character_weapon_thumbnail').attr("itemid",armory.weapon_array[uczen_pobrany.weapon-1].id);
+        $('#character_weapon_thumbnail').attr("itemtype","weapon");
+        $('#character_weapon_thumbnail').removeAttr("disabled");
+    }else{
+        $('#character_weapon_thumbnail').attr("style","null");
+        $('#character_weapon_thumbnail').attr("disabled","true");
+    }
+    
+
+}
 </script>
+
 </html>
