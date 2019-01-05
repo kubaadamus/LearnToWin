@@ -16,6 +16,7 @@ $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . m
 $sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
 $result = mysqli_query($database,$sql);
 $success = mysqli_num_rows($result);
+//============================================= Pobieranie ilości monet przyznanych uczniowi za oceny =================================//
 if($success>0)
 {
     while ($row=mysqli_fetch_row($result))
@@ -23,6 +24,7 @@ if($success>0)
         $coins = $row[5];
     }
 }
+//===========================================================KLASY================================================//
 class uczen_object
 {
    //Ekwipunek
@@ -33,8 +35,16 @@ class uczen_object
    public $pants = 0;
    public $boots = 0;
    public $weapon = 0;
+   public $weapon2 = 0;
+   public $weapon3 = 0;
+   public $weapon4 = 0;
+   public $weapon5 = 0;
 
-   public function __construct($_base=0, $_helmet=0, $_torso=0, $_gloves=0, $_pants=0, $_boots=0, $_weapon=0)
+   public $perk1 = 0;
+   public $perk2 = 0;
+   public $perk3 = 0;
+
+   public function __construct($_base=0, $_helmet=0, $_torso=0, $_gloves=0, $_pants=0, $_boots=0, $_weapon=0, $_weapon2=0, $_weapon3=0, $_weapon4=0, $_weapon5=0, $_perk1=0, $_perk2=0, $_perk3=0)
    {
       //Ekwipunek
       $this->base = $_base;
@@ -44,7 +54,15 @@ class uczen_object
       $this->pants = $_pants;
       $this->boots = $_boots;
       $this->weapon = $_weapon;
-      $this->wypisz();
+      $this->weapon2 = $_weapon2;
+      $this->weapon3 = $_weapon3;
+      $this->weapon4 = $_weapon4;
+      $this->weapon5 = $_weapon5;
+
+      $this->perk1 = $_perk1;
+      $this->perk2 = $_perk2;
+      $this->perk3 = $_perk3;
+      //$this->wypisz();
    }
    public function wypisz(){
        //Ekwipunek
@@ -58,6 +76,7 @@ class uczen_object
        debug_to_console("--------------------------------");
    }
 }
+//===================================================POBRANIE UCZNIA JAKO JSON============================================//
     $sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
     $result = mysqli_query($database,$sql);
     $success = mysqli_num_rows($result);
@@ -68,22 +87,19 @@ class uczen_object
             $uczen_pobrany = json_decode($row[6]);
         }
     }
-////echo "Uczeń przed modyfikacjami: ".json_encode($uczen_pobrany)."";
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
-$elements = array("base","helmet","torso","gloves","pants","boots","weapon");
+$elements = array("base","helmet","torso","gloves","pants","boots","weapon", "weapon2", "weapon3", "weapon4", "weapon5", "perk1", "perk2", "perk3"); // te tabele w bazie danych będą przeszukane 
 foreach($elements as $value)
 {
-    $sql = "SELECT * FROM $value WHERE ID =".$uczen_pobrany->$value;
-    ////echo $sql;
+    $sql = "SELECT * FROM $value WHERE ID =".$uczen_pobrany->$value; // zapytaj tabelę helmets (a potem inne) o helmet  o ID = 1 
     $result = mysqli_query($database,$sql);
     $success = mysqli_num_rows($result);
-    if($success>0)
+    if($success>0) // jeśli wartość helmeta ucznia jest inna niż zero to znaczy że uczeń ma jakiś helmet
     {
-        while ($row=mysqli_fetch_row($result))
+        while ($row=mysqli_fetch_row($result)) 
         {
-            ////echo "<br>cena $value: ".$row[2];
-            $wartosc_postaci += $row[2];
+            $wartosc_postaci += $row[2]; // pobiera cenę przedmiotu np helmeta 1 i dodaje ją do wartości postaci
         }
     }
     else{

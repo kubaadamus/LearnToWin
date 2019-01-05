@@ -99,41 +99,70 @@ canvas{
     top:50%;
     transform:translateY(-50%);
 }
-#character_helmet_thumbnail, #character_torso_thumbnail, .character_base, #character_gloves_thumbnail, #character_weapon_thumbnail, #character_boots_thumbnail, #character_pants_thumbnail{
-    width:100px;
-    height:100px;
+#character_helmet_thumbnail, #character_torso_thumbnail, .character_base, #character_gloves_thumbnail, 
+#character_weapon_thumbnail, #character_boots_thumbnail, #character_pants_thumbnail, #character_weapon2_thumbnail,
+#character_weapon3_thumbnail, #character_weapon4_thumbnail, #character_weapon5_thumbnail,
+#character_perk1_thumbnail,#character_perk2_thumbnail,#character_perk3_thumbnail
+ {
+    width:70px;
+    height:70px;
+    background-size: cover;
     position: absolute;
 }
 #character_helmet_thumbnail{
     top:0px;
-    left:50%;
-    transform:translateX(-50%);
+    right:0px;
 }
 #character_torso_thumbnail{
     right:0px;
-    top:30%;
-    transform:translateY(-50%);
+    top:20%;
 }
 #character_gloves_thumbnail{
     right:0px;
-    top:50%;
-    transform:translateY(-50%);
+    top:40%;
 }
 #character_pants_thumbnail{
     right:0px;
-    top:70%;
-    transform:translateY(-50%);
-}
-#character_weapon_thumbnail{
-    top:50%;
-    left:0px;
-    transform:translateY(-50%);
+    top:60%;
 }
 #character_boots_thumbnail{
-    top:100%;
-    left:50%;
-    transform:translate(-50%,-100%);
+    top:80%;
+    right:0px;
 }
+#character_weapon_thumbnail{
+    top:0px;
+    left:0px;
+}
+#character_weapon2_thumbnail{
+    top:20%;
+    left:0px;
+}
+#character_weapon3_thumbnail{
+    top:40%;
+    left:0px;
+}
+#character_weapon4_thumbnail{
+    top:60%;
+    left:0px;
+}
+#character_weapon5_thumbnail{
+    top:80%;
+    left:0px;
+}
+
+#character_perk1_thumbnail{
+    top:80%;
+    left:25%;
+}
+#character_perk2_thumbnail{
+    top:80%;
+    left:40%;
+}
+#character_perk3_thumbnail{
+    top:80%;
+    left:55%;
+}
+
 .character_bar{
     width:100px;
     height:20px;

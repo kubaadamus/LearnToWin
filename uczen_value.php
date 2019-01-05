@@ -12,7 +12,7 @@ $uczen_pobrany = ($_GET["uczen_pobrany"]);
 $obj = (json_decode($uczen_pobrany));
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 $wartosc_postaci=0;
-$elements = array("base","helmet","torso","gloves","pants","boots","weapon");
+$elements = array("base","helmet","torso","gloves","pants","boots","weapon","weapon2","weapon3","weapon4","weapon5","perk1","perk2","perk3");
 foreach ($elements as $value)
 {
     $sql = "SELECT * FROM $value WHERE ID =".$obj->$value;
