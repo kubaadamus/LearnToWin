@@ -1,0 +1,11 @@
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.deps.json
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.runtimeconfig.json
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.runtimeconfig.dev.json
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.dll
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.pdb
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csprojAssemblyReference.cache
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csproj.CoreCompileInputs.cache
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfoInputs.cache
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfo.cs
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.dll
+D:\PROJEKTY\strony_internetowe\LearnToWin\C#\SQL\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.pdb
