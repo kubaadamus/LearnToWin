@@ -1,65 +1,81 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
+using System.Web.Script.Serialization;
 using System;
-using System.Net;
-using System.Web;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Reflection;
+using System.Collections.Generic;
 
 public class SQL : MonoBehaviour {
 
-    int argument = 0;
-    int wartosc = 1;
+	void Start () {
 
-	// Use int for initialization
-	void Start () {   
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            //RefreshCharacter();
+        //rifles
+        Item m4a1 = new Item(ItemType.rifle, 120, "m4a1", "assets/m4a1");
 
-            SQLQueryClass.SqlQuery("buy.php", "login=Jakub&password=Adamus&sellbuy=sell&item=perk1&id=1&autoPowrot=1&");
-            Debug.Log(SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&"));
-        }
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            //RefreshCharacter();
+        //pistols
+        Item desertEagle = new Item(ItemType.pistol, 60, "desertEagle", "assets/desertEagle");
 
-            SQLQueryClass.SqlQuery("buy.php", "login=Jakub&password=Adamus&sellbuy=buy&item=perk1&id=1&autoPowrot=1&");
-            Debug.Log(SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&"));
-            Debug.Log(SQLQueryClass.SqlQuery("coins_update.php", "login=Jakub&password=Adamus&"));
-        }
-    }
-    void RefreshCharacter()
-    {
-        string response = SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&");
-        if (response != null)
-        {
-            response = response.Replace("}", ",}");
-            Debug.Log(response);
-            Uczen maciej = CreateCharacter(response);
-            maciej.Wypisz();
-        }
-        else
-        {
-            Debug.Log("NUL XD :C");
-        }
-    }
-    Uczen CreateCharacter(string response)
-    {
-        return new Uczen(returnShit(response,0), returnShit(response, 1), returnShit(response, 2), returnShit(response, 3), returnShit(response, 4), returnShit(response, 5), returnShit(response, 6), returnShit(response, 7), returnShit(response, 8), returnShit(response, 9), returnShit(response, 10), returnShit(response, 11), returnShit(response, 12), returnShit(response, 13));
-    }
-    int returnShit(string serialized,int what)
-    {
-        return Int32.Parse(serialized.Split(',')[what].Replace("{", "").Replace("\"", "").Split(':')[wartosc]);
+        //throwable
+        Item F1Grenade = new Item(ItemType.grenade, 70, "F1Grenade", "assets/F1Grenade");
+
+        //medikits
+        Item FirstAidKit = new Item(ItemType.medikit, 20, "FirstAidKit", "assets/firstAidKit");
+
+        //armors
+        Item BasicArmor = new Item(ItemType.armor, 40, "BasicArmor", "assets/BasicArmor");
+
+
+        Uczen Character = new Uczen("Jakub", "Adamus", m4a1, desertEagle, F1Grenade, FirstAidKit, BasicArmor,new List<Item>());
+
+        Character.ItemList.Add(new Item(ItemType.rifle, 20, "aaa", "aaabbb"));
+
+        var json = new JavaScriptSerializer().Serialize(Character);
+
+        Debug.Log(json);
     }
 
- 
+
 }
+
+public class Uczen
+{
+    public string imie;
+    public string nazwisko;
+
+    //ekwipunek
+    public Item primary;
+    public Item secondary;
+    public Item throwable;
+    public Item medikit;
+    public Item armor;
+
+    public List<Item> ItemList;
+
+    public Uczen(string imie, string nazwisko, Item primary, Item secondary, Item throwable, Item medikit, Item armor, List<Item> itemList)
+    {
+        this.imie = imie;
+        this.nazwisko = nazwisko;
+        this.primary = primary;
+        this.secondary = secondary;
+        this.throwable = throwable;
+        this.medikit = medikit;
+        this.armor = armor;
+        ItemList = itemList;
+    }
+}
+public class Item
+{
+    public ItemType type;
+    public int price;
+    public string name;
+    public string thumbnail;
+
+    public Item(ItemType type, int price, string name, string thumbnail)
+    {
+        this.type = type;
+        this.price = price;
+        this.name = name;
+        this.thumbnail = thumbnail;
+    }
+}
+
+public enum ItemType {pistol, rifle, grenade, armor, ammo, medikit};
