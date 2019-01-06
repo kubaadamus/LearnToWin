@@ -18,7 +18,6 @@ public static class SQLQueryClass
         string response = SendRequest("http://imprezpol.cba.pl/"+script+"?"+query+"");
         if (response != null)
         {
-            response = response.Replace("}", ",}");
             return response;
         }
         else
