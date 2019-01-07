@@ -3,28 +3,32 @@ using UnityEngine;
 using System.Web.Script.Serialization;
 using System;
 using System.Collections.Generic;
-public enum ItemType { pistol, rifle, grenade, armor, ammo, medikit, perk };
-public class SQL : MonoBehaviour {
-
+public enum ItemType { helmet, pistol, rifle, grenade, armor, ammo, medikit, perk };
+public class SQL : MonoBehaviour
+{
     float TotalCoins = 0;
     float CharacterValue = 0;
     float CoinsToSpend = 0;
     public static Uczen Character;
+    public Item[] Armory;
+    public GameObject ShopContent;
+    public GameObject ShopButtonPrefab;
     public static event Delegat SqlFinished;
     public delegate void Delegat(object sender, EventArgs eventargs);
 
-    void Start() {
+    void Start()
+    {
 
         //rifles
-        Item m4a1 = new Item(ItemType.rifle, 12, "m4a1", "assets/m4a1");
+        //Item m4a1 = new Item(ItemType.rifle, 12, "m4a1", "assets/m4a1");
         //pistols
-        Item desertEagle = new Item(ItemType.pistol, 32, "desertEagle", "assets/desertEagle");
+        //Item desertEagle = new Item(ItemType.pistol, 32, "desertEagle", "assets/desertEagle");
         //throwable
-        Item F1Grenade = new Item(ItemType.grenade, 10, "F1Grenade", "assets/F1Grenade");
+        //Item F1Grenade = new Item(ItemType.grenade, 10, "F1Grenade", "assets/F1Grenade");
         //medikits
-        Item FirstAidKit = new Item(ItemType.medikit, 20, "FirstAidKit", "assets/firstAidKit");
+        //Item FirstAidKit = new Item(ItemType.medikit, 20, "FirstAidKit", "assets/firstAidKit");
         //armors
-        Item BasicArmor = new Item(ItemType.armor, 50, "BasicArmor", "assets/BasicArmor");
+        //Item BasicArmor = new Item(ItemType.armor, 50, "BasicArmor", "assets/BasicArmor");
 
         //Uczen Character = new Uczen("Jakub", "Adamus", m4a1, desertEagle, F1Grenade, FirstAidKit, BasicArmor, new List<Item>());
         //Character.ItemList.Add(new Item(ItemType.rifle, 20, "aaa", "aaabbb"));
@@ -34,12 +38,62 @@ public class SQL : MonoBehaviour {
         //Debug.Log(json);
 
 
+
+
+
+
+        ArmoryCreate();
         CharacterDownload();
         CharacterUpload();
+        Invoke("Invoke", 0.1f);
+        ShopItemButtonScript.ShopButtonPressed += CheckForBuyTest;
+        ShopSelectButton.ShopSelectButtonPressed += ShopSelectButtonHandler;
 
 
 
-
+    }
+    public void DrawShop(string type)
+    {
+        foreach (Transform child in ShopContent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        Debug.Log(type);
+        int col = 0;
+        int row = 0;
+        foreach (Item i in Armory)
+        {
+   if(i.type == type)
+            {
+                GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                button.transform.SetParent(ShopContent.transform);
+                ItemType typ;
+                Enum.TryParse<ItemType>(i.type, out typ);
+                button.GetComponent<ShopItemButtonScript>().typ = typ;
+                col++;
+                if (col == 3)
+                {
+                    col = 0;
+                    row--;
+                }
+            }  
+        }
+        //ShopContent.GetComponent<RectTransform>().sizeDelta = new Vector2(-9, 100 * -row);
+    }
+    public void ShopSelectButtonHandler(object sender, EventArgs args, ShopSelectionEnum typ)
+    {
+        if(typ==ShopSelectionEnum.primary)DrawShop("rifle");
+        if (typ == ShopSelectionEnum.secondary) DrawShop("pistol");
+        if (typ == ShopSelectionEnum.armor) DrawShop("helmet");
+    }
+    public void CheckForBuyTest(object sender, EventArgs eventargs, ItemType typ)
+    {
+        Debug.Log(typ);
+    }
+    public void Invoke()
+    {
+        SqlFinished(null, null);
     }
     float CalculateCharacterValue(Uczen Character)
     {
@@ -49,13 +103,10 @@ public class SQL : MonoBehaviour {
         {
             _CharacterValue += i.price;
         }
-
         return _CharacterValue;
-
     }
     public void CharacterDownload()
     {
-
         Character = new JavaScriptSerializer().Deserialize<Uczen>(SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&"));       // pobieranie ucznia z serwera
         TotalCoins = float.Parse(SQLQueryClass.SqlQuery("coins_update.php", "login=Jakub&password=Adamus&").Replace(".", ","));                     // Pobierz ilość monet na podstawie ocen
         CharacterValue = CalculateCharacterValue(Character);                                                                                        //Oblicz wartość postaci
@@ -64,13 +115,24 @@ public class SQL : MonoBehaviour {
         Debug.Log("Totalna ilość dostępnych coinsów to: " + TotalCoins);
         Debug.Log("Wartość ucznia to: " + CharacterValue);
         Debug.Log("Możesz wydać: " + CoinsToSpend);
+    }
+    public void ArmoryCreate()
+    {
+        string json = (SQLQueryClass.SqlQuery("armory_create.php", "login=Jakub&password=Adamus&"));
+        Debug.Log("JSON:" + json);
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        Armory = js.Deserialize<Item[]>(json);
 
-        SqlFinished(this, EventArgs.Empty);
+        foreach (Item a in Armory)
+        {
+            Debug.Log(a.DescribeItem());
+        }
     }
     public void CharacterUpload()
     {
         string apdejt = "UPDATE uczniowie SET uczen_object ='" + new JavaScriptSerializer().Serialize(Character) + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
         SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=" + apdejt + "");
+
     }
     void CharacterAddItem()
     {
@@ -79,22 +141,13 @@ public class SQL : MonoBehaviour {
     }
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            CharacterDownload();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            CharacterUpload();
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            CharacterAddItem();
-        }
+
+    }
+    public void testZParametreeeem(string a)
+    {
+
     }
 }
-
-
 
 public class Uczen
 {
@@ -108,14 +161,11 @@ public class Uczen
     public Item medikit;
     public Item armor;
     public Item perk;
-
     public List<Item> ItemList;
-
     public Uczen()
     {
 
     }
-
     public Uczen(string imie, string nazwisko, Item primary, Item secondary, Item throwable, Item medikit, Item armor, Item perk, List<Item> itemList)
     {
         this.imie = imie;
@@ -131,21 +181,27 @@ public class Uczen
 }
 public class Item
 {
-    public ItemType type;
+    public int id;
+    public string type;
     public int price;
     public string name;
-    public string thumbnail;
-
+    public string obiekt;
     public Item()
     {
 
     }
-    public Item(ItemType type, int price, string name, string thumbnail)
+    public Item(int id = 0, string type = "", int price = 0, string name = "", string obiekt = "brak")
     {
+        this.id = id;
         this.type = type;
         this.price = price;
         this.name = name;
-        this.thumbnail = thumbnail;
+        this.obiekt = obiekt;
+    }
+    public string DescribeItem()
+    {
+        return nameof(id) + ":" + id + " " + nameof(type) + ":" + type + " " + nameof(price) + ":" + price + " " + nameof(name) + ":" + name + " " + nameof(obiekt) + ":" + obiekt;
+
     }
 }
 

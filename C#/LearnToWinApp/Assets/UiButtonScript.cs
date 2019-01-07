@@ -8,51 +8,61 @@ using System;
 public class UiButtonScript : MonoBehaviour {
 
     public enum UiButtonType { primary, secondary, throwable, medikit, armor, perk};
-    bool once = true;
+    public GameObject teksttestxD;
 	public UiButtonType type;
     Button button;
     
 	void Start () {
-
-        button = GetComponent<Button>();
         SQL.SqlFinished += UiUpdate;
-    }
-	
-    
-	void Update () {
+        button = GetComponent<Button>();
 
+    }
+    void Update () {
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            UiUpdate(null, null);
+        }
 	}
 
     public void UiUpdate(object sender, EventArgs eventargs)
     {
-        if (type == UiButtonType.primary && SQL.Character.primary != null)
+        if(type == UiButtonType.primary)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.primary.name;
         }
-
-        else if (type == UiButtonType.secondary && SQL.Character.secondary != null)
+        if (type == UiButtonType.secondary)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.secondary.name;
         }
-        else if (type == UiButtonType.throwable && SQL.Character.throwable != null)
+        if (type == UiButtonType.throwable)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.throwable.name;
         }
-        else if (type == UiButtonType.medikit && SQL.Character.medikit!=null)
+        if (type == UiButtonType.medikit)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.medikit.name;
         }
-        else if (type == UiButtonType.armor && SQL.Character.armor != null)
+        if (type == UiButtonType.armor)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.armor.name;
         }
-        else if (type == UiButtonType.perk && SQL.Character.perk != null)
+        if (type == UiButtonType.perk)
         {
             button.GetComponentInChildren<Text>().text = SQL.Character.perk.name;
         }
-        else
+    }
+
+    public void onClickEventHandler()
+    {
+        switch(type)
         {
-            button.GetComponentInChildren<Text>().text = "BRAK";
+            case UiButtonType.primary:teksttestxD.GetComponent<Text>().text = SQL.Character.primary.DescribeItem(); break;
+            case UiButtonType.secondary: teksttestxD.GetComponent<Text>().text = SQL.Character.secondary.DescribeItem(); break;
+            case UiButtonType.throwable: teksttestxD.GetComponent<Text>().text = SQL.Character.throwable.DescribeItem(); break;
+            case UiButtonType.armor: teksttestxD.GetComponent<Text>().text = SQL.Character.armor.DescribeItem(); break;
+            case UiButtonType.medikit: teksttestxD.GetComponent<Text>().text = SQL.Character.medikit.DescribeItem(); break;
+            case UiButtonType.perk: teksttestxD.GetComponent<Text>().text = SQL.Character.perk.DescribeItem(); break;
         }
+
     }
 }
