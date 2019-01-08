@@ -8,7 +8,7 @@ public class ShopSelectButton : MonoBehaviour {
 
     public ShopSelectionEnum typ;
     public static event ShopSelectButtonDelegate ShopSelectButtonPressed;
-    public delegate void ShopSelectButtonDelegate(object sender, EventArgs eventargs, ShopSelectionEnum typ);
+    public delegate void ShopSelectButtonDelegate(ShopSelectionEnum typ);
     void Start()
     {
 
@@ -21,6 +21,6 @@ public class ShopSelectButton : MonoBehaviour {
     }
     public void ButtonPressed()
     {
-        ShopSelectButtonPressed(null, null, typ);
+        ShopSelectButtonPressed(typ);
     }
 }

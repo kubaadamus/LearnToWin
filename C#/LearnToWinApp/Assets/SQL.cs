@@ -7,11 +7,13 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-public enum ItemType { helmet, pistol, rifle, grenade, armor, ammo, medikit, perk };
 public class SQL : MonoBehaviour
 {
     float TotalCoins = 0;
     float CoinsToSpend = 0;
+    public GameObject ShopContent;
+    public GameObject ShopButtonPrefab;
+    public GameObject CharacterCoins;
     public static Uczen Character;
     public List<Primary> PrimaryList = new List<Primary>();
     public List<Secondary> SecondaryList = new List<Secondary>();
@@ -19,10 +21,133 @@ public class SQL : MonoBehaviour
     public List<Med> MedList = new List<Med>();
     public List<Armor> ArmorList = new List<Armor>();
     public List<Perk> PerkList = new List<Perk>();
+
+    //Event
+    public static event UpdateThingsDelegate UpdateThingsEvent;
+    public delegate void UpdateThingsDelegate();
+
+    public Texture2D ahaha;
     void Start()
     {
         CreateArmory();
         CharacterDownload();
+        DrawShop(ShopSelectionEnum.primary);
+        ShopItemButton.ShopItemButtonPressed += ShopItemButtonPressedHandler;
+        ShopSelectButton.ShopSelectButtonPressed += ShopSelectButtonPressedHandler;
+        UpdateThingsEvent();
+        CharacterCoins.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: "+Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
+        //SpriteRenderer renderer;
+        //renderer = GetComponent<SpriteRenderer>();
+        //Texture2D hehehe = PrimaryList[0].texture;
+        //renderer.sprite = Sprite.Create(hehehe, new Rect(0.0f, 0.0f, hehehe.width, hehehe.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+        
+
+    }
+
+    public void DrawShop(ShopSelectionEnum ShopSelection)
+    {
+
+        foreach (Transform child in ShopContent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        int col = 0;
+        int row = 0;
+        switch (ShopSelection)
+        {
+            case ShopSelectionEnum.primary:
+                foreach (Primary i in PrimaryList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+            case ShopSelectionEnum.secondary:
+                foreach (Secondary i in SecondaryList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+            case ShopSelectionEnum.throwable:
+                foreach (Throwable i in ThrowableList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+            case ShopSelectionEnum.mediikit:
+                foreach (Med i in MedList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+            case ShopSelectionEnum.armor:
+                foreach (Armor i in ArmorList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+            case ShopSelectionEnum.perk:
+                foreach (Perk i in PerkList)
+                {
+                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.SetParent(ShopContent.transform);
+                    button.GetComponent<ShopItemButton>().Item = i;
+                    col++;
+                    if (col == 3)
+                    {
+                        col = 0;
+                        row--;
+                    }
+                }
+                break;
+        }
+
     }
     public void CharacterDownload()
     {
@@ -40,12 +165,39 @@ public class SQL : MonoBehaviour
     }
     public void CreateArmory()
     {
-        PrimaryList.Add(new Primary("m1a1",10, 10, null));
-        SecondaryList.Add(new Secondary("glock", 15, 30, null));
-        ThrowableList.Add(new Throwable("f1", 14, 90, null));
-        MedList.Add(new Med("firstaidkit", 15, 30, null));
-        ArmorList.Add(new Armor("BasicArmor", 16, 30, null));
-        PerkList.Add(new Perk("stamina+", 19, 30, null));
+        //Primary
+        PrimaryList.Add(new Primary("m1a1",20, 10, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("m16", 30, 10, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("m14", 40, 10, LoadPNG("primary/doll.png")));
+
+        //Secondary
+        SecondaryList.Add(new Secondary("glock", 25, 30, LoadPNG("secondary/doll.png")));
+        ThrowableList.Add(new Throwable("f1", 24, 90, LoadPNG("throwable/doll.png")));
+        MedList.Add(new Med("firstaidkit", 25, 30, LoadPNG("med/doll.png")));
+        ArmorList.Add(new Armor("BasicArmor", 16, 30, LoadPNG("armor/doll.png")));
+        PerkList.Add(new Perk("stamina+", 19, 30, LoadPNG("perk/doll.png")));
+    }
+    public Texture2D LoadPNG(string filePath)
+    {
+        filePath = Application.dataPath + "/tex/" +filePath;
+        Texture2D tex = null;
+        byte[] fileData;
+        if (File.Exists(filePath))
+        {
+            fileData = File.ReadAllBytes(filePath);
+            tex = new Texture2D(2, 2);
+            tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+        }
+        return tex;
+    }
+    public void ShopItemButtonPressedHandler(GameObject button)
+    {
+        Debug.Log("Wciśnięto przycisk" + button.GetComponent<ShopItemButton>().Item.name);
+        
+    }
+    public void ShopSelectButtonPressedHandler(ShopSelectionEnum typ)
+    {
+        DrawShop(typ);
     }
 }
 public class Uczen
@@ -103,13 +255,8 @@ public class Uczen
         Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
     }
 }
-public class Primary
+public class Primary : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Primary(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -118,13 +265,8 @@ public class Primary
         this.texture = texture;
     }
 }
-public class Secondary
+public class Secondary : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Secondary(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -133,13 +275,8 @@ public class Secondary
         this.texture = texture;
     }
 }
-public class Throwable
+public class Throwable : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Throwable(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -148,13 +285,8 @@ public class Throwable
         this.texture = texture;
     }
 }
-public class Med
+public class Med : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Med(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -163,13 +295,8 @@ public class Med
         this.texture = texture;
     }
 }
-public class Armor
+public class Armor : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Armor(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -178,13 +305,8 @@ public class Armor
         this.texture = texture;
     }
 }
-public class Perk
+public class Perk : Item
 {
-    public string name;
-    public int price;
-    public int damage;
-    public Texture2D texture;
-
     public Perk(string name, int price, int damage, Texture2D texture)
     {
         this.name = name;
@@ -192,4 +314,11 @@ public class Perk
         this.damage = damage;
         this.texture = texture;
     }
+}
+public class Item
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
 }
