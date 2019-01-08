@@ -39,9 +39,10 @@ if($success>0)
             $coins += $pl*$row[3];
         }
     }
+    $coins = intval($coins);
     $sql_updateCoins = "UPDATE uczniowie SET coins = $coins WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
     mysqli_query($database, $sql_updateCoins); //Tutaj baza danych otrzymuje aktualną wartość coins
-    echo $coins;
+    echo intval($coins);
 }
 else{
     echo("NIEPRAWIDŁOWA NAZWA UŻYTKOWNIKA LUB HASŁO, SPRÓBUJ PONOWNIE");

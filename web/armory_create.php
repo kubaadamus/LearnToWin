@@ -12,12 +12,13 @@ $password = ($_POST["password"]);
 $elements = array("helmet","pistol","rifle"); // po prostu dopisz table które ma przeszukać PHP :D
 $ItemArray = array();
 class Item{
-    function __construct($_id=0, $_type=0, $_price=0, $_name, $_obiekt)
+    function __construct($_id=0, $_type=0, $_price=0, $_name="",$_thumbnail="", $_obiekt="")
     {
        $this->id = $_id;
        $this->type = $_type;
        $this->price = $_price;
        $this->name = $_name;
+       $this->thumbnail = $_thumbnail;
        $this->obiekt = $_obiekt;
     }
 }
@@ -30,7 +31,7 @@ foreach ($elements as $value)
     {
         while ($row=mysqli_fetch_row($result)) //row to tabela komórek danego rekordu. rekordy pobierane są kolejno
         {
-        array_push($ItemArray,new Item($row[0],$row[1],$row[2],$row[3],$row[4]));
+        array_push($ItemArray,new Item($row[0],$row[1],$row[2],$row[3],$row[4],$row[5]));
         }
     }
     else{

@@ -3,130 +3,34 @@ using UnityEngine;
 using System.Web.Script.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using UnityEngine.UI;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 public enum ItemType { helmet, pistol, rifle, grenade, armor, ammo, medikit, perk };
 public class SQL : MonoBehaviour
 {
     float TotalCoins = 0;
-    float CharacterValue = 0;
     float CoinsToSpend = 0;
     public static Uczen Character;
-    public Item[] Armory;
-    public GameObject ShopContent;
-    public GameObject ShopButtonPrefab;
-    public static event Delegat SqlFinished;
-    public delegate void Delegat(object sender, EventArgs eventargs);
-
+    public List<Primary> PrimaryList = new List<Primary>();
+    public List<Secondary> SecondaryList = new List<Secondary>();
+    public List<Throwable> ThrowableList = new List<Throwable>();
+    public List<Med> MedList = new List<Med>();
+    public List<Armor> ArmorList = new List<Armor>();
+    public List<Perk> PerkList = new List<Perk>();
     void Start()
     {
-
-        //rifles
-        //Item m4a1 = new Item(ItemType.rifle, 12, "m4a1", "assets/m4a1");
-        //pistols
-        //Item desertEagle = new Item(ItemType.pistol, 32, "desertEagle", "assets/desertEagle");
-        //throwable
-        //Item F1Grenade = new Item(ItemType.grenade, 10, "F1Grenade", "assets/F1Grenade");
-        //medikits
-        //Item FirstAidKit = new Item(ItemType.medikit, 20, "FirstAidKit", "assets/firstAidKit");
-        //armors
-        //Item BasicArmor = new Item(ItemType.armor, 50, "BasicArmor", "assets/BasicArmor");
-
-        //Uczen Character = new Uczen("Jakub", "Adamus", m4a1, desertEagle, F1Grenade, FirstAidKit, BasicArmor, new List<Item>());
-        //Character.ItemList.Add(new Item(ItemType.rifle, 20, "aaa", "aaabbb"));
-        //Debug.Log(SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=SELECT * FROM pants UNION SELECT * FROM torso UNION SELECT * FROM helmet")); // pobieranie z wielu tabel jednocześnie * muszą mieć te same ilości kolumn
-        //testuczen.ItemList.RemoveAll(s => s.name == "kupa"); // usuwa wszystkie itemy których name to kupa
-        //var json = new JavaScriptSerializer().Serialize(Character);
-        //Debug.Log(json);
-
-
-
-
-
-
-        ArmoryCreate();
+        CreateArmory();
         CharacterDownload();
-        CharacterUpload();
-        Invoke("Invoke", 0.1f);
-        ShopItemButtonScript.ShopButtonPressed += CheckForBuyTest;
-        ShopSelectButton.ShopSelectButtonPressed += ShopSelectButtonHandler;
-
-
-
-    }
-    public void DrawShop(string type)
-    {
-        foreach (Transform child in ShopContent.transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
-        Debug.Log(type);
-        int col = 0;
-        int row = 0;
-        foreach (Item i in Armory)
-        {
-   if(i.type == type)
-            {
-                GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
-                button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
-                button.transform.SetParent(ShopContent.transform);
-                ItemType typ;
-                Enum.TryParse<ItemType>(i.type, out typ);
-                button.GetComponent<ShopItemButtonScript>().typ = typ;
-                col++;
-                if (col == 3)
-                {
-                    col = 0;
-                    row--;
-                }
-            }  
-        }
-        //ShopContent.GetComponent<RectTransform>().sizeDelta = new Vector2(-9, 100 * -row);
-    }
-    public void ShopSelectButtonHandler(object sender, EventArgs args, ShopSelectionEnum typ)
-    {
-        if(typ==ShopSelectionEnum.primary)DrawShop("rifle");
-        if (typ == ShopSelectionEnum.secondary) DrawShop("pistol");
-        if (typ == ShopSelectionEnum.armor) DrawShop("helmet");
-    }
-    public void CheckForBuyTest(object sender, EventArgs eventargs, ItemType typ)
-    {
-        Debug.Log(typ);
-    }
-    public void Invoke()
-    {
-        SqlFinished(null, null);
-    }
-    float CalculateCharacterValue(Uczen Character)
-    {
-        int _CharacterValue = Character.primary.price + Character.secondary.price + Character.throwable.price + Character.medikit.price + Character.armor.price;
-
-        foreach (Item i in Character.ItemList)
-        {
-            _CharacterValue += i.price;
-        }
-        return _CharacterValue;
     }
     public void CharacterDownload()
     {
-        Character = new JavaScriptSerializer().Deserialize<Uczen>(SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&"));       // pobieranie ucznia z serwera
         TotalCoins = float.Parse(SQLQueryClass.SqlQuery("coins_update.php", "login=Jakub&password=Adamus&").Replace(".", ","));                     // Pobierz ilość monet na podstawie ocen
-        CharacterValue = CalculateCharacterValue(Character);                                                                                        //Oblicz wartość postaci
-        CoinsToSpend = TotalCoins - CharacterValue;                                                                                                 //Obliczamy dostępne środki
-
-        Debug.Log("Totalna ilość dostępnych coinsów to: " + TotalCoins);
-        Debug.Log("Wartość ucznia to: " + CharacterValue);
-        Debug.Log("Możesz wydać: " + CoinsToSpend);
-    }
-    public void ArmoryCreate()
-    {
-        string json = (SQLQueryClass.SqlQuery("armory_create.php", "login=Jakub&password=Adamus&"));
-        Debug.Log("JSON:" + json);
-        JavaScriptSerializer js = new JavaScriptSerializer();
-        Armory = js.Deserialize<Item[]>(json);
-
-        foreach (Item a in Armory)
-        {
-            Debug.Log(a.DescribeItem());
-        }
+        var json = SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&");
+        Debug.Log(json);
+        Character = new JavaScriptSerializer().Deserialize<Uczen>(json);       // pobieranie ucznia z serwera
+        Character.Fill(PrimaryList,SecondaryList,ThrowableList,MedList,ArmorList,PerkList);
     }
     public void CharacterUpload()
     {
@@ -134,75 +38,158 @@ public class SQL : MonoBehaviour
         SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=" + apdejt + "");
 
     }
-    void CharacterAddItem()
+    public void CreateArmory()
     {
-        //Character.perk = (new Item(ItemType.perk, 2, "perkxDD", "assets/perklolzz"));
-        //Character.ItemList.RemoveAll(s => s.name == "ammo"); // usuwa wszystkie itemy których name to kupa
-    }
-    void Update()
-    {
-
-    }
-    public void testZParametreeeem(string a)
-    {
-
+        PrimaryList.Add(new Primary("m1a1",10, 10, null));
+        SecondaryList.Add(new Secondary("glock", 15, 30, null));
+        ThrowableList.Add(new Throwable("f1", 14, 90, null));
+        MedList.Add(new Med("firstaidkit", 15, 30, null));
+        ArmorList.Add(new Armor("BasicArmor", 16, 30, null));
+        PerkList.Add(new Perk("stamina+", 19, 30, null));
     }
 }
-
 public class Uczen
 {
-    public string imie;
-    public string nazwisko;
-
+    public string id;
+    public string school;
+    public string name1;
+    public string name2;
+    public string Class;
+    public string primary;
+    public string secondary;
+    public string throwable;
+    public string med;
+    public string armor;
+    public string perk;
     //ekwipunek
-    public Item primary;
-    public Item secondary;
-    public Item throwable;
-    public Item medikit;
-    public Item armor;
-    public Item perk;
-    public List<Item> ItemList;
+    public Primary primary_obj;
+    public Secondary secondary_obj;
+    public Throwable throwable_obj;
+    public Med med_obj;
+    public Armor armor_obj;
+    public Perk perk_obj;
+    //portfel i wrtość ucznia
+    public int coins;
+    public int CharacterValue=0;
+    public int SpendableCoins = 0;
     public Uczen()
     {
-
     }
-    public Uczen(string imie, string nazwisko, Item primary, Item secondary, Item throwable, Item medikit, Item armor, Item perk, List<Item> itemList)
+    public Uczen(string id, string school, string name1, string name2, string @class, string coins, string primary, string secondary, string throwable, string med, string armor, string perk)
     {
-        this.imie = imie;
-        this.nazwisko = nazwisko;
+        this.id = id;
+        this.school = school;
+        this.name1 = name1;
+        this.name2 = name2;
+        Class = @class;
+        this.coins = Int32.Parse(coins);
         this.primary = primary;
         this.secondary = secondary;
         this.throwable = throwable;
-        this.medikit = medikit;
+        this.med = med;
         this.armor = armor;
         this.perk = perk;
-        ItemList = itemList;
+    }
+    public void Fill(List<Primary> PriList, List<Secondary> SecList, List<Throwable> ThrList, List<Med> MedList, List<Armor> ArmorList, List<Perk> PerkList)
+    {
+        this.primary_obj = PriList[int.Parse(primary)];
+        this.secondary_obj = SecList[int.Parse(secondary)];
+        this.throwable_obj = ThrList[int.Parse(throwable)];
+        this.med_obj = MedList[int.Parse(med)];
+        this.armor_obj = ArmorList[int.Parse(armor)];
+        this.perk_obj = PerkList[int.Parse(perk)];
+        this.CharacterValue = primary_obj.price + secondary_obj.price + throwable_obj.price + med_obj.price + armor_obj.price + perk_obj.price;
+        this.SpendableCoins = coins - CharacterValue;
+        Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
     }
 }
-public class Item
+public class Primary
 {
-    public int id;
-    public string type;
-    public int price;
     public string name;
-    public string obiekt;
-    public Item()
-    {
+    public int price;
+    public int damage;
+    public Texture2D texture;
 
-    }
-    public Item(int id = 0, string type = "", int price = 0, string name = "", string obiekt = "brak")
+    public Primary(string name, int price, int damage, Texture2D texture)
     {
-        this.id = id;
-        this.type = type;
-        this.price = price;
         this.name = name;
-        this.obiekt = obiekt;
-    }
-    public string DescribeItem()
-    {
-        return nameof(id) + ":" + id + " " + nameof(type) + ":" + type + " " + nameof(price) + ":" + price + " " + nameof(name) + ":" + name + " " + nameof(obiekt) + ":" + obiekt;
-
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
     }
 }
+public class Secondary
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
 
+    public Secondary(string name, int price, int damage, Texture2D texture)
+    {
+        this.name = name;
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
+    }
+}
+public class Throwable
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
 
+    public Throwable(string name, int price, int damage, Texture2D texture)
+    {
+        this.name = name;
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
+    }
+}
+public class Med
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
+
+    public Med(string name, int price, int damage, Texture2D texture)
+    {
+        this.name = name;
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
+    }
+}
+public class Armor
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
+
+    public Armor(string name, int price, int damage, Texture2D texture)
+    {
+        this.name = name;
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
+    }
+}
+public class Perk
+{
+    public string name;
+    public int price;
+    public int damage;
+    public Texture2D texture;
+
+    public Perk(string name, int price, int damage, Texture2D texture)
+    {
+        this.name = name;
+        this.price = price;
+        this.damage = damage;
+        this.texture = texture;
+    }
+}
