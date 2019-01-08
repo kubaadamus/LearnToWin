@@ -13,6 +13,9 @@ public class CharacterGearItemButton : MonoBehaviour {
     void Start () {
         SQL.UpdateThingsEvent += CharacterGearItemButtonUpdate;
         CurrentImage = GameObject.Find("CurrentImage").GetComponent<Image>();
+
+        BuyButton.BuyButtonPressedEvent += CharacterGearItemButtonUpdate;
+
     }
 	
 

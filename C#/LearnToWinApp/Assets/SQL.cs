@@ -34,17 +34,29 @@ public class SQL : MonoBehaviour
         DrawShop(ShopSelectionEnum.primary);
         ShopItemButton.ShopItemButtonPressed += ShopItemButtonPressedHandler;
         ShopSelectButton.ShopSelectButtonPressed += ShopSelectButtonPressedHandler;
-        UpdateThingsEvent();
+        BuyButton.BuyButtonPressedEvent += RefreshAll;
+
         CharacterCoins.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: "+Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
         //SpriteRenderer renderer;
         //renderer = GetComponent<SpriteRenderer>();
         //Texture2D hehehe = PrimaryList[0].texture;
         //renderer.sprite = Sprite.Create(hehehe, new Rect(0.0f, 0.0f, hehehe.width, hehehe.height), new Vector2(0.5f, 0.5f), 100.0f);
 
-        
+        Invoke("UpdateThings",0.01f);
+    }
+    public void UpdateThings() // musi być w funkcji żeby to invokować
+    {
+        UpdateThingsEvent();
+    }
+    public void RefreshAll()
+    {
+        Debug.Log("Kupiono jakiś syf! odświeżamy wszystko co sie da :D ");
+        CharacterDownload();
+        DrawShop(ShopSelectionEnum.primary);
+        CharacterCoins.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: " + Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
+
 
     }
-
     public void DrawShop(ShopSelectionEnum ShopSelection)
     {
 
@@ -54,6 +66,7 @@ public class SQL : MonoBehaviour
         }
         int col = 0;
         int row = 0;
+        int id = 0;
         switch (ShopSelection)
         {
             case ShopSelectionEnum.primary:
@@ -63,12 +76,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.primary;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
             case ShopSelectionEnum.secondary:
@@ -78,12 +94,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.secondary;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
             case ShopSelectionEnum.throwable:
@@ -93,12 +112,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.throwable;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
             case ShopSelectionEnum.mediikit:
@@ -108,12 +130,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.mediikit;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
             case ShopSelectionEnum.armor:
@@ -123,12 +148,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.armor;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
             case ShopSelectionEnum.perk:
@@ -138,12 +166,15 @@ public class SQL : MonoBehaviour
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
+                    button.GetComponent<ShopItemButton>().Item.id = id;
+                    button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.perk;
                     col++;
                     if (col == 3)
                     {
                         col = 0;
                         row--;
                     }
+                    id++;
                 }
                 break;
         }
@@ -156,25 +187,41 @@ public class SQL : MonoBehaviour
         Debug.Log(json);
         Character = new JavaScriptSerializer().Deserialize<Uczen>(json);       // pobieranie ucznia z serwera
         Character.Fill(PrimaryList,SecondaryList,ThrowableList,MedList,ArmorList,PerkList);
+        UpdateThings();
     }
-    public void CharacterUpload()
+    public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
     {
-        string apdejt = "UPDATE uczniowie SET uczen_object ='" + new JavaScriptSerializer().Serialize(Character) + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
+        string apdejt = "UPDATE uczniowie SET "+ColumnToUpdate+" ='" + idToUpdate + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
         SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=" + apdejt + "");
+        Debug.Log(apdejt);
 
     }
     public void CreateArmory()
     {
         //Primary
-        PrimaryList.Add(new Primary("m1a1",20, 10, LoadPNG("primary/doll.png")));
-        PrimaryList.Add(new Primary("m16", 30, 10, LoadPNG("primary/doll.png")));
-        PrimaryList.Add(new Primary("m14", 40, 10, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("Empty",0,0, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("m1a1",50, 10, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("m16", 70, 10, LoadPNG("primary/doll.png")));
+        PrimaryList.Add(new Primary("m14", 80, 10, LoadPNG("primary/doll.png")));
 
         //Secondary
+        SecondaryList.Add(new Secondary("Empty", 0, 0, LoadPNG("primary/doll.png")));
         SecondaryList.Add(new Secondary("glock", 25, 30, LoadPNG("secondary/doll.png")));
+
+        //Throwable
+        ThrowableList.Add(new Throwable("Empty", 0, 0, LoadPNG("primary/doll.png")));
         ThrowableList.Add(new Throwable("f1", 24, 90, LoadPNG("throwable/doll.png")));
+
+        //Med
+        MedList.Add(new Med("Empty", 0, 0, LoadPNG("primary/doll.png")));
         MedList.Add(new Med("firstaidkit", 25, 30, LoadPNG("med/doll.png")));
+
+        //Armor
+        ArmorList.Add(new Armor("Empty", 0, 0, LoadPNG("primary/doll.png")));
         ArmorList.Add(new Armor("BasicArmor", 16, 30, LoadPNG("armor/doll.png")));
+
+        //Perk
+        PerkList.Add(new Perk("Empty", 0, 0, LoadPNG("primary/doll.png")));
         PerkList.Add(new Perk("stamina+", 19, 30, LoadPNG("perk/doll.png")));
     }
     public Texture2D LoadPNG(string filePath)
@@ -253,6 +300,7 @@ public class Uczen
         this.CharacterValue = primary_obj.price + secondary_obj.price + throwable_obj.price + med_obj.price + armor_obj.price + perk_obj.price;
         this.SpendableCoins = coins - CharacterValue;
         Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
+
     }
 }
 public class Primary : Item
@@ -317,6 +365,8 @@ public class Perk : Item
 }
 public class Item
 {
+    public ShopSelectionEnum type;
+    public int id;
     public string name;
     public int price;
     public int damage;

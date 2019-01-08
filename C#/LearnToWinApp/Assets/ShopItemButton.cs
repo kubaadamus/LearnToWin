@@ -16,7 +16,6 @@ public class ShopItemButton : MonoBehaviour {
     {
         BuyItemProperties = GameObject.Find("BuyProperties");
         BuyImage = GameObject.Find("BuyImage");
-        Debug.Log("Utworzono guzik z primary xD");
         Debug.Log(Item.name);
         transform.GetChild(0).GetComponent<Text>().text = Item.name;
         GetComponent<Image>().sprite = Sprite.Create(Item.texture, new Rect(0.0f, 0.0f, Item.texture.width, Item.texture.height), new Vector2(0.5f, 0.5f), 100.0f);
@@ -24,11 +23,15 @@ public class ShopItemButton : MonoBehaviour {
         {
             transform.GetChild(0).GetComponent<Text>().text = Item.name+"za drogie";
         }
+        Debug.Log("Stworzono guzik z typem Itemu: " + Item.type);
     }
     public void ButtonPressed()
     {
         ShopItemButtonPressed(gameObject);
         BuyItemProperties.GetComponent<Text>().text = Item.name;
         BuyImage.GetComponent<Image>().sprite = Sprite.Create(Item.texture, new Rect(0.0f, 0.0f, Item.texture.width, Item.texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+        GameObject.Find("BuyButton").GetComponent<BuyButton>().ItemToBuy = Item;
+
     }
 }
