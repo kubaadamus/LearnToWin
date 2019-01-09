@@ -22,6 +22,11 @@ public class ShopItemButton : MonoBehaviour {
         if (Item.price>SQL.Character.SpendableCoins)
         {
             transform.GetChild(0).GetComponent<Text>().text = Item.name+"za drogie";
+            var colors = GetComponent<Button>().colors;
+            colors.normalColor = Color.red;
+            colors.highlightedColor = Color.red;
+            colors.pressedColor = Color.red;
+            GetComponent<Button>().colors = colors;
         }
         //Debug.Log("Stworzono guzik z typem Itemu: " + Item.type);
     }

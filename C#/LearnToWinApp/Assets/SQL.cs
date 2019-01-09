@@ -19,6 +19,7 @@ public class SQL : MonoBehaviour
     public GameObject ShopItemButtonPrefab;                         //Prefab którym zostanie wyłożony content sklepu na podstawie armory
     public GameObject CharacterStatsText;                           //Tekst statystyk gracza czyli coinsy, spendy i wartość
     public static Uczen Character;                                  //Statyczny obiekt Character.
+    public Scrollbar ProcentScrollbar;
     //Zmienne czekające na uzupełnienie z SQL
     int CharacterCoinsSql = 0;
     string CharacterJsonSql = "";
@@ -38,13 +39,7 @@ public class SQL : MonoBehaviour
 
         // Zwykłe funkcje startowe
         CreateArmory();                                             // Tworzy listy primarów seconadrów itd i wypełnia je odpowiednimi obiektami                                      
-
-        Invoke("CharacterDownload", 0.5f);                              // Updatuje i pobiera coinsy z serwera, potem pobiera ucznia, robi z niego obiekt i wypełnia ekwipunek z armory
-        //DrawShop(ShopSelectionEnum.primary);                        // Na początku gry automatycznie rysujemy sklepik z primary 
-
-        //ShopSelectButton.ShopSelectButtonPressed += DrawShop;       // Jeśli wybierzemy zakładkę sklepiku to uruchamia się DrawShop
-
-
+        Invoke("CharacterDownload", 0.5f);                          // Updatuje i pobiera coinsy z serwera, potem pobiera ucznia, robi z niego obiekt i wypełnia ekwipunek z armory
     }
     public void CharacterDownload()
     {
@@ -55,14 +50,14 @@ public class SQL : MonoBehaviour
     {
         Character = new JavaScriptSerializer().Deserialize<Uczen>(CharacterJsonSql);                                                        // pobieranie ucznia z serwera
         Character.Fill(PrimaryList, SecondaryList, ThrowableList, MedList, ArmorList, PerkList);
-        CharacterStatsText.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: " + Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
+        float Procent = (float)Math.Round(((float)Character.CharacterValue/ (float)Character.coins),2);
+        ProcentScrollbar.size = Procent;
+        CharacterStatsText.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + Environment.NewLine + " Character Value: " + Character.CharacterValue.ToString() + Environment.NewLine + " Spendable Coins: " + Character.SpendableCoins.ToString() + Environment.NewLine + "Procent wykorzystania postaci: " + Procent*100 + "%";
     }
-
     public void SqlSkonczonyTest(string response, string callbackFunctionName)
     {
         //Ta funkcja zostaje odpalona dopiero gdy web client bedzie miał dane.  
         Debug.Log(response + callbackFunctionName);
-        //CharacterCreate();
         if(callbackFunctionName == "CoinsUpdate")
         {
             CharacterCoinsSql = Int32.Parse(response);
@@ -72,6 +67,9 @@ public class SQL : MonoBehaviour
             CharacterJsonSql = response;
             CharacterCreate();
             CharacterGearItemButtonUpdateEvent(); // zaktualizuj UI ekwipunku
+            DrawShop(ShopSelectionEnum.primary);
+            //wciśnij odpowiedni przycisk
+            GameObject.Find("PrimaryBtn").GetComponent<Button>().onClick.Invoke();
         }
         if(callbackFunctionName == "CharacterUpload")
         {
@@ -79,7 +77,6 @@ public class SQL : MonoBehaviour
             CharacterCreate();
         }
     }
-
     public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
     {
         string apdejt = "UPDATE uczniowie SET " + ColumnToUpdate + " ='" + idToUpdate + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
@@ -235,6 +232,7 @@ public class SQL : MonoBehaviour
         //Perk
         PerkList.Add(new Perk("Empty", 0, 0, LoadPNG("primary/doll.png")));
         PerkList.Add(new Perk("stamina+", 19, 30, LoadPNG("perk/doll.png")));
+
     }
     public Texture2D LoadPNG(string filePath)
     {
