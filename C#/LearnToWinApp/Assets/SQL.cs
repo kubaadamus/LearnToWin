@@ -7,59 +7,87 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Net;
 public class SQL : MonoBehaviour
 {
-    float TotalCoins = 0;
-    float CoinsToSpend = 0;
-    public GameObject ShopContent;
-    public GameObject ShopButtonPrefab;
-    public GameObject CharacterCoins;
-    public static Uczen Character;
-    public List<Primary> PrimaryList = new List<Primary>();
+    //Eventy
+    public static event CharacterGearItemButtonUpdateDelegate CharacterGearItemButtonUpdateEvent; //Ustawia przyciski ekwipunku bohatera po lewej w momencie stworzenia bohatera
+    public delegate void CharacterGearItemButtonUpdateDelegate();
+
+
+    public GameObject ShopContent;                                  //Content sklepu do którego będą dołączane przyciski
+    public GameObject ShopItemButtonPrefab;                         //Prefab którym zostanie wyłożony content sklepu na podstawie armory
+    public GameObject CharacterStatsText;                           //Tekst statystyk gracza czyli coinsy, spendy i wartość
+    public static Uczen Character;                                  //Statyczny obiekt Character.
+    //Zmienne czekające na uzupełnienie z SQL
+    int CharacterCoinsSql = 0;
+    string CharacterJsonSql = "";
+    //Listy zbrojowni
+    public List<Primary> PrimaryList = new List<Primary>();         
     public List<Secondary> SecondaryList = new List<Secondary>();
     public List<Throwable> ThrowableList = new List<Throwable>();
     public List<Med> MedList = new List<Med>();
     public List<Armor> ArmorList = new List<Armor>();
     public List<Perk> PerkList = new List<Perk>();
 
-    //Event
-    public static event UpdateThingsDelegate UpdateThingsEvent;
-    public delegate void UpdateThingsDelegate();
-
-    public Texture2D ahaha;
     void Start()
     {
-        CreateArmory();
-        CharacterDownload();
-        DrawShop(ShopSelectionEnum.primary);
-        ShopItemButton.ShopItemButtonPressed += ShopItemButtonPressedHandler;
-        ShopSelectButton.ShopSelectButtonPressed += ShopSelectButtonPressedHandler;
-        BuyButton.BuyButtonPressedEvent += RefreshAll;
+        //Przypisania eventów
+        SQLQueryClass.ClientSqlCompletedEvent += SqlSkonczonyTest;  //Uruchamia funkcję SqlSkonczonyTest pełną callbacków
+        ShopSelectButton.ShopSelectButtonPressedEvent += DrawShop;
 
-        CharacterCoins.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: "+Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
-        //SpriteRenderer renderer;
-        //renderer = GetComponent<SpriteRenderer>();
-        //Texture2D hehehe = PrimaryList[0].texture;
-        //renderer.sprite = Sprite.Create(hehehe, new Rect(0.0f, 0.0f, hehehe.width, hehehe.height), new Vector2(0.5f, 0.5f), 100.0f);
+        // Zwykłe funkcje startowe
+        CreateArmory();                                             // Tworzy listy primarów seconadrów itd i wypełnia je odpowiednimi obiektami                                      
 
-        Invoke("UpdateThings",0.01f);
+        Invoke("CharacterDownload", 0.5f);                              // Updatuje i pobiera coinsy z serwera, potem pobiera ucznia, robi z niego obiekt i wypełnia ekwipunek z armory
+        //DrawShop(ShopSelectionEnum.primary);                        // Na początku gry automatycznie rysujemy sklepik z primary 
+
+        //ShopSelectButton.ShopSelectButtonPressed += DrawShop;       // Jeśli wybierzemy zakładkę sklepiku to uruchamia się DrawShop
+
+
     }
-    public void UpdateThings() // musi być w funkcji żeby to invokować
+    public void CharacterDownload()
     {
-        UpdateThingsEvent();
+        SQLQueryClass.SqlQuery("coins_update.php", "login=Jakub&password=Adamus&","CoinsUpdate").Replace(".", ","); // Pobierz ilość monet na podstawie ocen
+        SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&", "CharacterCreate");
     }
-    public void RefreshAll()
+    public void CharacterCreate()
     {
-        Debug.Log("Kupiono jakiś syf! odświeżamy wszystko co sie da :D ");
-        CharacterDownload();
-        DrawShop(ShopSelectionEnum.primary);
-        CharacterCoins.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: " + Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
+        Character = new JavaScriptSerializer().Deserialize<Uczen>(CharacterJsonSql);                                                        // pobieranie ucznia z serwera
+        Character.Fill(PrimaryList, SecondaryList, ThrowableList, MedList, ArmorList, PerkList);
+        CharacterStatsText.GetComponent<Text>().text = " Total Coins: " + Character.coins.ToString() + " Character Value: " + Character.CharacterValue.ToString() + " Spendable Coins: " + Character.SpendableCoins.ToString();
+    }
 
+    public void SqlSkonczonyTest(string response, string callbackFunctionName)
+    {
+        //Ta funkcja zostaje odpalona dopiero gdy web client bedzie miał dane.  
+        Debug.Log(response + callbackFunctionName);
+        //CharacterCreate();
+        if(callbackFunctionName == "CoinsUpdate")
+        {
+            CharacterCoinsSql = Int32.Parse(response);
+        }
+        if(callbackFunctionName == "CharacterCreate")
+        {
+            CharacterJsonSql = response;
+            CharacterCreate();
+            CharacterGearItemButtonUpdateEvent(); // zaktualizuj UI ekwipunku
+        }
+        if(callbackFunctionName == "CharacterUpload")
+        {
+            CharacterDownload();
+            CharacterCreate();
+        }
+    }
 
+    public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
+    {
+        string apdejt = "UPDATE uczniowie SET " + ColumnToUpdate + " ='" + idToUpdate + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
+        SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=" + apdejt + "", "CharacterUpload");
+        //Debug.Log(apdejt);
     }
     public void DrawShop(ShopSelectionEnum ShopSelection)
     {
-
         foreach (Transform child in ShopContent.transform)
         {
             GameObject.Destroy(child.gameObject);
@@ -72,7 +100,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.primary:
                 foreach (Primary i in PrimaryList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -90,7 +118,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.secondary:
                 foreach (Secondary i in SecondaryList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -108,7 +136,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.throwable:
                 foreach (Throwable i in ThrowableList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -126,7 +154,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.mediikit:
                 foreach (Med i in MedList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -144,7 +172,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.armor:
                 foreach (Armor i in ArmorList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -162,7 +190,7 @@ public class SQL : MonoBehaviour
             case ShopSelectionEnum.perk:
                 foreach (Perk i in PerkList)
                 {
-                    GameObject button = Instantiate(ShopButtonPrefab, ShopContent.transform);
+                    GameObject button = Instantiate(ShopItemButtonPrefab, ShopContent.transform);
                     button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
                     button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
@@ -178,22 +206,6 @@ public class SQL : MonoBehaviour
                 }
                 break;
         }
-
-    }
-    public void CharacterDownload()
-    {
-        TotalCoins = float.Parse(SQLQueryClass.SqlQuery("coins_update.php", "login=Jakub&password=Adamus&").Replace(".", ","));                     // Pobierz ilość monet na podstawie ocen
-        var json = SQLQueryClass.SqlQuery("user_create.php", "login=Jakub&password=Adamus&");
-        Debug.Log(json);
-        Character = new JavaScriptSerializer().Deserialize<Uczen>(json);       // pobieranie ucznia z serwera
-        Character.Fill(PrimaryList,SecondaryList,ThrowableList,MedList,ArmorList,PerkList);
-        UpdateThings();
-    }
-    public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
-    {
-        string apdejt = "UPDATE uczniowie SET "+ColumnToUpdate+" ='" + idToUpdate + "' WHERE imie = 'Jakub' AND nazwisko = 'Adamus'"; // wysyłanie ucznia na serwer
-        SQLQueryClass.SqlQuery("universal_query.php", "login=Jakub&password=Adamus&query=" + apdejt + "");
-        Debug.Log(apdejt);
 
     }
     public void CreateArmory()
@@ -236,15 +248,6 @@ public class SQL : MonoBehaviour
             tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
         }
         return tex;
-    }
-    public void ShopItemButtonPressedHandler(GameObject button)
-    {
-        Debug.Log("Wciśnięto przycisk" + button.GetComponent<ShopItemButton>().Item.name);
-        
-    }
-    public void ShopSelectButtonPressedHandler(ShopSelectionEnum typ)
-    {
-        DrawShop(typ);
     }
 }
 public class Uczen
@@ -299,7 +302,7 @@ public class Uczen
         this.perk_obj = PerkList[int.Parse(perk)];
         this.CharacterValue = primary_obj.price + secondary_obj.price + throwable_obj.price + med_obj.price + armor_obj.price + perk_obj.price;
         this.SpendableCoins = coins - CharacterValue;
-        Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
+        //Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
 
     }
 }

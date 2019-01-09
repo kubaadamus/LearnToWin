@@ -7,7 +7,7 @@ public class ShopSelectButton : MonoBehaviour {
 
 
     public ShopSelectionEnum typ;
-    public static event ShopSelectButtonDelegate ShopSelectButtonPressed;
+    public static event ShopSelectButtonDelegate ShopSelectButtonPressedEvent; //Event do uruchamiania draw shop w SQL. podaje mu typ przyciśniętego guzika
     public delegate void ShopSelectButtonDelegate(ShopSelectionEnum typ);
     void Start()
     {
@@ -21,6 +21,6 @@ public class ShopSelectButton : MonoBehaviour {
     }
     public void ButtonPressed()
     {
-        ShopSelectButtonPressed(typ);
+        ShopSelectButtonPressedEvent(typ);
     }
 }

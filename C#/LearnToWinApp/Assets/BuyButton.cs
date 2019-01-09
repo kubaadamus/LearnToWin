@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 public class BuyButton : MonoBehaviour {
 
-    public static event BuyButtonPressedEventDelegate BuyButtonPressedEvent;
-    public delegate void BuyButtonPressedEventDelegate();
+
 
     public Item ItemToBuy;
 	void Start () {
-        ShopItemButton.ShopItemButtonPressed += BuyButtonUpdate;
+        ShopItemButton.ShopItemButtonPressedEvent += BuyButtonUpdate;
 
     }
 	
@@ -35,9 +34,6 @@ public class BuyButton : MonoBehaviour {
         }
         else
         {
-
-
-
             switch(ItemToBuy.type)
             {
                 case ShopSelectionEnum.primary:SQL.CharacterUpload("pri", ItemToBuy.id);break;
@@ -47,8 +43,8 @@ public class BuyButton : MonoBehaviour {
                 case ShopSelectionEnum.armor: SQL.CharacterUpload("armor", ItemToBuy.id); break;
                 case ShopSelectionEnum.perk: SQL.CharacterUpload("perk", ItemToBuy.id); break;
             }
-            Debug.Log("Możesz kupić");
-            BuyButtonPressedEvent();
+            //Debug.Log("Możesz kupić");
+
         }
     }
 }

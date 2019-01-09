@@ -13,9 +13,11 @@ using System.Reflection;
 
 public static class SQLQueryClass
 {
-    public static string SqlQuery(string script, string query)
+    public static event ClientSqlCompletedDelegate ClientSqlCompletedEvent;
+    public delegate void ClientSqlCompletedDelegate(string response, string callbackFunctionName);
+    public static string SqlQuery(string script, string query, string callbackFunctionName)
     {
-        string response = SendRequest("http://imprezpol.cba.pl/"+script+"?"+query+"");
+        string response = SendRequest("http://imprezpol.cba.pl/"+script+"?"+query+"", callbackFunctionName);
         if (response != null)
         {
             return response;
@@ -25,13 +27,18 @@ public static class SQLQueryClass
             return "Response is NULL";
         }
     }
-    public static string SendRequest(string url)
+    public static string SendRequest(string url, string callbackFunctionName)
     {
         try
         {
             using (WebClient client = new WebClient())
             {
-                return client.DownloadString(new Uri(url));
+                string StrToReturn = client.DownloadString(new Uri(url));
+
+                    ClientSqlCompletedEvent(StrToReturn, callbackFunctionName);
+                
+
+                return StrToReturn;
             }
         }
         catch (WebException ex)
@@ -40,5 +47,6 @@ public static class SQLQueryClass
             return null;
         }
     }
+
 }
 
