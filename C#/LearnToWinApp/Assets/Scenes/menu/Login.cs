@@ -1,0 +1,50 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+public class Login : MonoBehaviour
+{
+    //Eventy
+    public static event EnterMenuDelegate EnterMenuEvent; //Ustawia przyciski ekwipunku bohatera po lewej w momencie stworzenia bohatera
+    public delegate void EnterMenuDelegate();
+    
+    public GameObject Camera;
+    void Start()
+    {
+        SQLQueryClass.ClientSqlCompletedEvent += SqlSkonczonyTest;  //Uruchamia funkcję SqlSkonczonyTest pełną callbacków
+        Debug.Log("WHAT");
+    }
+    void Update()
+    {
+    }
+    public void EnterGame()
+    {
+
+
+
+        SQL.login = GameObject.Find("login").GetComponent<InputField>().text;
+        SQL.password = GameObject.Find("password").GetComponent<InputField>().text;
+
+
+        SQLQueryClass.SqlQuery("user_create.php", "login=" + SQL.login + "&password=" + SQL.password + "&", "LoginCheck");
+
+
+
+    }
+
+    public void SqlSkonczonyTest(string response, string callbackFunctionName)
+    {
+        if (callbackFunctionName == "LoginCheck" && response != "null")
+        {
+            EnterMenuEvent();
+            Camera.GetComponent<CameraScript>().TargetPosition = Camera.GetComponent<CameraScript>().MenuPos.transform.position;
+        }
+        else
+        {
+            Debug.Log("NOPE XD");
+            GameObject.Find("badpassword").GetComponent<Text>().enabled = true;
+        }
+    }
+    }

@@ -8,8 +8,6 @@ $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
 $login = ($_GET["login"]);
 $password = ($_GET["password"]);
-$login = "Jakub";
-$password = "Adamus";
 //=================================================== STWORZENIE OBIEKTU UCZNIA =============================================//
 $sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
 $result = mysqli_query($database,$sql);
