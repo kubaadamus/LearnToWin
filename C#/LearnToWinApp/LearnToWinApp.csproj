@@ -238,15 +238,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BackToEquipmentButton.cs" />
     <Compile Include="Assets\CameraScript.cs" />
     <Compile Include="Assets\Logout.cs" />
     <Compile Include="Assets\QuitBtn.cs" />
+    <Compile Include="Assets\Rank.cs" />
     <Compile Include="Assets\Scenes\menu\BuyButton.cs" />
     <Compile Include="Assets\Scenes\menu\CharacterGearItemButton.cs" />
     <Compile Include="Assets\Scenes\menu\classes.cs" />
     <Compile Include="Assets\Scenes\menu\Login.cs" />
     <Compile Include="Assets\Scenes\menu\ShopItemButton.cs" />
     <Compile Include="Assets\Scenes\menu\SQL.cs" />
+    <Compile Include="Assets\ShopScrollBar.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

@@ -6,6 +6,7 @@ public class CameraScript : MonoBehaviour {
 
     public GameObject LoginPos;
     public GameObject MenuPos;
+    public GameObject RankPos;
     public Vector3 TargetPosition;
 	void Start () {
         TargetPosition = LoginPos.transform.position;

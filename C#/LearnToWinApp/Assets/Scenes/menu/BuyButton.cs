@@ -27,11 +27,11 @@ public class BuyButton : MonoBehaviour {
     public void BuyButtonPressed()
     {
 
-        Debug.Log("Chesz kupic" + ItemToBuy.name + " które ma cene " + ItemToBuy.price + "jest typu: "+ItemToBuy.type + " jego id to: "+ItemToBuy.id);
+        //Debug.Log("Chesz kupic" + ItemToBuy.name + " które ma cene " + ItemToBuy.price + "jest typu: "+ItemToBuy.type + " jego id to: "+ItemToBuy.id);
 
         if(ItemToBuy.price > SQL.Character.SpendableCoins)
         {
-            Debug.Log("Nie możesz kupić");
+            //Debug.Log("Nie możesz kupić");
         }
         else
         {

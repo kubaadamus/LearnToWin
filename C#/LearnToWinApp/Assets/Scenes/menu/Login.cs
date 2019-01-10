@@ -14,7 +14,11 @@ public class Login : MonoBehaviour
     void Start()
     {
         SQLQueryClass.ClientSqlCompletedEvent += SqlSkonczonyTest;  //Uruchamia funkcję SqlSkonczonyTest pełną callbacków
-        Debug.Log("WHAT");
+        //Debug.Log("WHAT");
+
+        SQL.login = "Jakub";
+        SQL.password = "Adamus";
+        EnterGame();
     }
     void Update()
     {
@@ -24,11 +28,11 @@ public class Login : MonoBehaviour
 
 
 
-        SQL.login = GameObject.Find("login").GetComponent<InputField>().text;
-        SQL.password = GameObject.Find("password").GetComponent<InputField>().text;
+        //SQL.login = GameObject.Find("login").GetComponent<InputField>().text;
+        //SQL.password = GameObject.Find("password").GetComponent<InputField>().text;
 
 
-        SQLQueryClass.SqlQuery("user_create.php", "login=" + SQL.login + "&password=" + SQL.password + "&", "LoginCheck");
+        SQLQueryClass.SqlQuery("user_create.php", "name1=" + SQL.login + "&name2=" + SQL.password + "&", "LoginCheck");
 
 
 
@@ -43,7 +47,7 @@ public class Login : MonoBehaviour
         }
         else
         {
-            Debug.Log("NOPE XD");
+            //Debug.Log("NOPE XD");
             GameObject.Find("badpassword").GetComponent<Text>().enabled = true;
         }
     }

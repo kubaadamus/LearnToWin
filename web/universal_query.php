@@ -6,8 +6,8 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-$login = ($_GET["login"]);
-$password = ($_GET["password"]);
+$login = ($_GET["name1"]);
+$password = ($_GET["name2"]);
 $query = ($_GET["query"]);
 //============================================= OBLICZENIE AKTUALNEJ WARTOŚCI UCZNIA =======================================//
 
@@ -21,5 +21,6 @@ $query = ($_GET["query"]);
     }
 
     echo json_encode($rows);
+
 
 ?>

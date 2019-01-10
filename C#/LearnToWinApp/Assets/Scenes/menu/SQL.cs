@@ -14,6 +14,7 @@ public class SQL : MonoBehaviour
     public GameObject ShopItemsParent;
     public static string login = "";
     public static string password = "";
+    public static int ShopItemsCount = 0;                                      //Ilość itemów w sklepiku 
     public GameObject ShopItemButtonPrefab;                         //Prefab którym zostanie wyłożony content sklepu na podstawie armory
     public GameObject CharacterStatsText;                           //Tekst statystyk gracza czyli coinsy, spendy i wartość
     public static Uczen Character;                                  //Statyczny obiekt Character.
@@ -73,6 +74,7 @@ public class SQL : MonoBehaviour
         CharacterGearItemButton.ShopSelectButtonPressedEvent += DrawShop;
         CharacterGearItemButton.ShopSelectButtonPressedEvent += LastSelectShopUpdate;
         Login.EnterMenuEvent += SqlClassStart;
+        CreateArmory();
 
     }
     public void SqlClassStart()
@@ -80,22 +82,23 @@ public class SQL : MonoBehaviour
         
         GameObject.Find("loading").GetComponent<Text>().enabled = true;
         // Zwykłe funkcje startowe
-        CreateArmory();                                             // Tworzy listy primarów seconadrów itd i wypełnia je odpowiednimi obiektami                                      
+                                                     // Tworzy listy primarów seconadrów itd i wypełnia je odpowiednimi obiektami                                      
         Invoke("CharacterDownload", 1.5f);                          // Updatuje i pobiera coinsy z serwera, potem pobiera ucznia, robi z niego obiekt i wypełnia ekwipunek z armory
     }
     public void LastSelectShopUpdate(CharacterGearItemButtonType type)
     {
         LastShopSelect = type;
-        Debug.Log("Zmieniam typ na  " + LastShopSelect);
+        //Debug.Log("Zmieniam typ na  " + LastShopSelect);
     }
     public void CharacterDownload()
     {
-        SQLQueryClass.SqlQuery("coins_update.php", "login="+login+ "&password=" + password + "&", "CoinsUpdate").Replace(".", ","); // Pobierz ilość monet na podstawie ocen
-        SQLQueryClass.SqlQuery("user_create.php", "login=" + login + "&password=" + password + "&", "CharacterCreate");
+        SQLQueryClass.SqlQuery("coins_update.php", "name1="+login+ "&name2=" + password + "&", "CoinsUpdate").Replace(".", ","); // Pobierz ilość monet na podstawie ocen
+        SQLQueryClass.SqlQuery("user_create.php", "name1=" + login + "&name2=" + password + "&", "CharacterCreate");
     }
     public void CharacterCreate()
     {
         Character = JsonUtility.FromJson<Uczen>(CharacterJsonSql);
+        Debug.Log(CharacterJsonSql);
         Character.Fill(PrimaryList, SecondaryList, ThrowableList, MedList, ArmorList, PerkList);
         float Procent = (float)Math.Round(((float)Character.CharacterValue/ (float)Character.coins),2);
         ProcentScrollbar.size = Procent;
@@ -122,7 +125,7 @@ public class SQL : MonoBehaviour
             CharacterCreate();
             DrawShop(LastShopSelect);
             GameObject.Find(LastShopSelect + "Btn").GetComponent<Button>().onClick.Invoke();
-            GameObject.Find("Content").transform.GetChild(0).GetComponent<Button>().onClick.Invoke();
+            GameObject.Find("ShopItemsParent").transform.GetChild(0).GetComponent<Button>().onClick.Invoke();
 
 
         }
@@ -130,34 +133,31 @@ public class SQL : MonoBehaviour
     }
     public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
     {
-        string apdejt = "UPDATE uczniowie SET " + ColumnToUpdate + " ='" + idToUpdate + "' WHERE imie = '" + login + "' AND nazwisko = '" + password + "'"; // wysyłanie ucznia na serwer
-        SQLQueryClass.SqlQuery("universal_query.php", "login=" + login + "&password=" + password + "&query=" + apdejt + "", "CharacterUpload");
+        string apdejt = "UPDATE uczniowie SET " + ColumnToUpdate + " ='" + idToUpdate + "' WHERE name1 = '" + login + "' AND name2 = '" + password + "'"; // wysyłanie ucznia na serwer
+        SQLQueryClass.SqlQuery("universal_query.php", "name1=" + login + "&name2=" + password + "&query=" + apdejt + "", "CharacterUpload");
         //Debug.Log(apdejt);
     }
     public void DrawShop(CharacterGearItemButtonType ShopSelection)
     {
-
-
-        int col = 0;
-        int row = 0;
+        foreach (Transform child in ShopItemsParent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        ShopItemsCount = 0;
         int id = 0;
+        int spacing = 140;
         switch (ShopSelection)
         {
             case CharacterGearItemButtonType.Primary:
                 foreach (Primary i in PrimaryList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.primary;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
@@ -165,17 +165,12 @@ public class SQL : MonoBehaviour
                 foreach (Secondary i in SecondaryList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.secondary;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
@@ -183,17 +178,12 @@ public class SQL : MonoBehaviour
                 foreach (Throwable i in ThrowableList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.throwable;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
@@ -201,17 +191,12 @@ public class SQL : MonoBehaviour
                 foreach (Med i in MedList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.mediikit;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
@@ -219,17 +204,12 @@ public class SQL : MonoBehaviour
                 foreach (Armor i in ArmorList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.armor;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
@@ -237,23 +217,18 @@ public class SQL : MonoBehaviour
                 foreach (Perk i in PerkList)
                 {
                     GameObject button = Instantiate(ShopItemButtonPrefab, ShopItemsParent.transform);
-                    button.transform.localPosition += new Vector3(70 * col, 70 * row, 0);
+                    button.transform.localPosition += new Vector3(spacing * ShopItemsCount, 0, 0);
                     //button.transform.SetParent(ShopContent.transform);
                     button.GetComponent<ShopItemButton>().Item = i;
                     button.GetComponent<ShopItemButton>().Item.id = id;
                     button.GetComponent<ShopItemButton>().Item.type = ShopSelectionEnum.perk;
-                    col++;
-                    if (col == 3)
-                    {
-                        col = 0;
-                        row--;
-                    }
+                    ShopItemsCount++;
                     id++;
                 }
                 break;
         }
 
-        GameObject.Find("loading").GetComponent<Text>().text = "DRAW SHOP!" + row;
+        GameObject.Find("loading").GetComponent<Text>().text = "DRAW SHOP!" + ShopItemsCount*spacing;
     }
     public void CreateArmory()
     {
@@ -270,36 +245,36 @@ public class SQL : MonoBehaviour
         PrimaryList.Add(new Primary("barrett", 140, 150, barrett_tex));
         //Secondary
         SecondaryList.Add(new Secondary("Empty", 0, 0, empty_tex));
-        SecondaryList.Add(new Secondary("colt", 25, 30, colt_tex));
-        SecondaryList.Add(new Secondary("glock", 0, 0, glock_tex));
-        SecondaryList.Add(new Secondary("1911", 25, 30, _1911_tex));
-        SecondaryList.Add(new Secondary("smg", 0, 0, smg_tex));
+        SecondaryList.Add(new Secondary("colt", 20, 30, colt_tex));
+        SecondaryList.Add(new Secondary("glock", 30, 0, glock_tex));
+        SecondaryList.Add(new Secondary("1911", 40, 30, _1911_tex));
+        SecondaryList.Add(new Secondary("smg", 50, 0, smg_tex));
 
         //Throwable
         ThrowableList.Add(new Throwable("Empty", 0, 0, empty_tex));
         ThrowableList.Add(new Throwable("f1", 24, 90, f1_tex));
-        ThrowableList.Add(new Throwable("m67", 24, 90, m67_tex));
-        ThrowableList.Add(new Throwable("german", 24, 90, german_tex));
-        ThrowableList.Add(new Throwable("flash", 24, 90, flash_tex));
+        ThrowableList.Add(new Throwable("m67", 34, 90, m67_tex));
+        ThrowableList.Add(new Throwable("german", 44, 90, german_tex));
+        ThrowableList.Add(new Throwable("flash", 54, 90, flash_tex));
 
         //Med
         MedList.Add(new Med("Empty", 0, 0, empty_tex));
         MedList.Add(new Med("adrenaline", 25, 30, syringe_tex));
-        MedList.Add(new Med("grabbingPillsxD", 25, 30, pills_tex));
-        MedList.Add(new Med("firstaidkit", 25, 30, firstaid_tex));
+        MedList.Add(new Med("grabbingPillsxD", 45, 30, pills_tex));
+        MedList.Add(new Med("firstaidkit", 55, 30, firstaid_tex));
 
         //Armor
         ArmorList.Add(new Armor("Empty", 0, 0, empty_tex));
         ArmorList.Add(new Armor("cardboard", 16, 30, cardboard_tex));
-        ArmorList.Add(new Armor("steel", 16, 30, steel_tex));
-        ArmorList.Add(new Armor("kevlar", 16, 30, kevlar_tex));
-        ArmorList.Add(new Armor("space", 16, 30, space_tex));
+        ArmorList.Add(new Armor("steel", 26, 30, steel_tex));
+        ArmorList.Add(new Armor("kevlar", 46, 30, kevlar_tex));
+        ArmorList.Add(new Armor("space", 56, 30, space_tex));
 
         //Perk
         PerkList.Add(new Perk("Empty", 0, 0, empty_tex));
         PerkList.Add(new Perk("stamina", 19, 30, stamina_tex));
-        PerkList.Add(new Perk("strength", 19, 30, strength_tex));
-        PerkList.Add(new Perk("agility", 19, 30, agility_tex));
+        PerkList.Add(new Perk("strength", 29, 30, strength_tex));
+        PerkList.Add(new Perk("agility", 49, 30, agility_tex));
 
     }
 }

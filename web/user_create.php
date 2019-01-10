@@ -6,10 +6,10 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-$login = ($_GET["login"]);
-$password = ($_GET["password"]);
+$login = ($_GET["name1"]);
+$password = ($_GET["name2"]);
 //=================================================== STWORZENIE OBIEKTU UCZNIA =============================================//
-$sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+$sql = "SELECT * FROM uczniowie WHERE name1 = '".$login."' AND name2 = '".$password."'" ;
 $result = mysqli_query($database,$sql);
 $success = mysqli_num_rows($result);
 if($success>0)

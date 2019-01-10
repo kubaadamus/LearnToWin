@@ -6,14 +6,14 @@ $db = 'jakubadamus';
 $host = 'mysql.cba.pl';
 $port = 3360;
 $database = mysqli_connect($host,$user,$DBpassword,$db) OR die('Niedaradyyy' . mysqli_connect_error());
-$login = ($_GET["login"]);
-$password = ($_GET["password"]);
+$login = ($_GET["name1"]);
+$password = ($_GET["name2"]);
 //=================================================== UPDATE MONET NA PODSTAWIE OCEN =============================================//
 $coins=0;
 $mat=5;
 $fiz=3;
 $pl=2;
-$sql = "SELECT * FROM uczniowie WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+$sql = "SELECT * FROM uczniowie WHERE name1 = '".$login."' AND name2 = '".$password."'" ;
 $result = mysqli_query($database,$sql);
 $success = mysqli_num_rows($result);
 if($success>0)
@@ -40,7 +40,7 @@ if($success>0)
         }
     }
     $coins = intval($coins);
-    $sql_updateCoins = "UPDATE uczniowie SET coins = $coins WHERE imie = '".$login."' AND nazwisko = '".$password."'" ;
+    $sql_updateCoins = "UPDATE uczniowie SET coins = $coins WHERE name1 = '".$login."' AND name2 = '".$password."'" ;
     mysqli_query($database, $sql_updateCoins); //Tutaj baza danych otrzymuje aktualną wartość coins
     echo intval($coins);
 }

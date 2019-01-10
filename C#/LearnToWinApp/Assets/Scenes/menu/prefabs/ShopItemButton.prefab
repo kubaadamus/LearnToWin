@@ -58,7 +58,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c68f0d543e04547a5d616f4b35e450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testText2D: {fileID: 2800000, guid: 29979af7f4678a44b91d48fa4e322ff1, type: 3}
 --- !u!114 &114526826009479984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,8 +189,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1603458299124908}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -96, y: 117, z: 0}
-  m_LocalScale: {x: 0.32691458, y: 1.7746855, z: 1.7746855}
+  m_LocalPosition: {x: -69, y: 146, z: 0}
+  m_LocalScale: {x: 0.81830305, y: 4.4422326, z: 4.4422326}
   m_Children:
   - {fileID: 224908547697780666}
   m_Father: {fileID: 0}
@@ -199,7 +198,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -96, y: 117}
+  m_AnchoredPosition: {x: -69, y: 146}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224908547697780666

@@ -12,7 +12,8 @@ public static class SQLQueryClass
     public delegate void ClientSqlCompletedDelegate(string response, string callbackFunctionName);
     public static string SqlQuery(string script, string query, string callbackFunctionName)
     {
-        string response = SendRequest("http://imprezpol.cba.pl/"+script+"?"+query+"", callbackFunctionName);
+        string queryString = "http://imprezpol.cba.pl/" + script + "?" + query + "";
+        string response = SendRequest(queryString, callbackFunctionName);
         if (response != null)
         {
             return response;
