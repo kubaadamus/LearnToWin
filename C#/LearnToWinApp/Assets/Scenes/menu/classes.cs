@@ -13,6 +13,7 @@ public static class SQLQueryClass
     public static string SqlQuery(string script, string query, string callbackFunctionName)
     {
         string queryString = "http://imprezpol.cba.pl/" + script + "?" + query + "";
+        Debug.Log("Query: " + queryString);
         string response = SendRequest(queryString, callbackFunctionName);
         if (response != null)
         {
@@ -39,7 +40,7 @@ public static class SQLQueryClass
         }
         catch (WebException ex)
         {
-
+            Debug.Log(ex);
             return null;
         }
     }

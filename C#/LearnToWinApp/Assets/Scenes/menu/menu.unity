@@ -564,6 +564,9 @@ MonoBehaviour:
   CharacterStatsText: {fileID: 2077528521}
   ProcentScrollbar: {fileID: 118583529}
   LastShopSelect: 0
+  PrzedmiotList: []
+  ChartRoot: {fileID: 1380854291415736, guid: a86c163de1e582042900a4e573bdd0c7, type: 2}
+  ChartCube: {fileID: 1224522682939546, guid: f640b434054a8ed49bb0cb24fbb99734, type: 2}
   empty_tex: {fileID: 2800000, guid: a43a976e21534d645aea6dd619dfd085, type: 3}
   m4a1_tex: {fileID: 2800000, guid: 664131736fc6d9747aa0280b63952619, type: 3}
   m16_tex: {fileID: 2800000, guid: 9b75799bbf4d17042bc1ee35258f1b41, type: 3}
@@ -1213,7 +1216,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 288513256}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 45, y: 108, z: 0}
+  m_LocalPosition: {x: 45, y: 278, z: 0}
   m_LocalScale: {x: 2.9088044, y: 2.9088016, z: 2.9088016}
   m_Children: []
   m_Father: {fileID: 367359194}
@@ -1221,7 +1224,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 45, y: 108}
+  m_AnchoredPosition: {x: 45, y: 278}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &288513258

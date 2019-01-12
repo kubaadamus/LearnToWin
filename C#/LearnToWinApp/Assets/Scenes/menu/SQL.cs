@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
+using System.Linq;
+
 public enum ShopSelectionEnum { primary, secondary, throwable, mediikit, armor, perk };
 public class SQL : MonoBehaviour
 {
@@ -30,6 +32,12 @@ public class SQL : MonoBehaviour
     public List<Med> MedList = new List<Med>();
     public List<Armor> ArmorList = new List<Armor>();
     public List<Perk> PerkList = new List<Perk>();
+    //Lista Ocen
+    public List<Ocena> NoteList = new List<Ocena>();
+    public List<string> PrzedmiotList = new List<string>(); // lista przedmiotów
+    public List<Chart> ChartList = new List<Chart>();
+    public GameObject ChartRoot; // empty który jest początkiem układu charta
+    public GameObject ChartCube; // Słupek wykresu
 
     //Textures
     public Texture2D empty_tex;
@@ -92,8 +100,10 @@ public class SQL : MonoBehaviour
     }
     public void CharacterDownload()
     {
-        SQLQueryClass.SqlQuery("coins_update.php", "name1="+login+ "&name2=" + password + "&", "CoinsUpdate").Replace(".", ","); // Pobierz ilość monet na podstawie ocen
+        SQLQueryClass.SqlQuery("coins_update.php", "name1="+login+ "&name2=" + password + "&coinsOrNotes=coins", "CoinsUpdate").Replace(".", ","); // Pobierz ilość monet na podstawie ocen
         SQLQueryClass.SqlQuery("user_create.php", "name1=" + login + "&name2=" + password + "&", "CharacterCreate");
+        //NOETES
+        SQLQueryClass.SqlQuery("coins_update.php", "name1=" + login + "&name2=" + password + "&coinsOrNotes=notes", "NotesUpdate"); // Pobierz tablicę ocen
     }
     public void CharacterCreate()
     {
@@ -129,7 +139,90 @@ public class SQL : MonoBehaviour
 
 
         }
+        if(callbackFunctionName== "NotesUpdate")
+        {
+            NotesUpdate(response);
+        }
         
+    }
+    public void NotesUpdate(string response)
+    {
+        string replacedResponse = response.Replace("},{", "}|{").Replace("[", "").Replace("]", "");
+        string[] ResponseArray = replacedResponse.Split('|');
+
+        foreach (string a in ResponseArray)
+        {
+            NoteList.Add(JsonUtility.FromJson<Ocena>(a));
+            Debug.Log(a);
+
+        }
+        foreach(Ocena o in NoteList)
+        {
+            if (!PrzedmiotList.Contains(o.type))
+            {
+                PrzedmiotList.Add(o.type);
+                Debug.Log("Dodaję przedmiot: " + o.type);
+                ChartList.Add(new Chart(o.type));
+            }
+        }
+
+        //przeszukaj oceny pod kątem każdego z przedmiotów i zrób z tego x,y + komentarz
+        foreach(string przedmiot in PrzedmiotList)
+        {
+            foreach(Ocena o in NoteList)
+            {
+                if(o.type==przedmiot)
+                {
+                    Debug.Log("ocena z przedmiotu: " + przedmiot + " nota: " + o.value + " data: " + o.date);
+                }
+            }
+        }
+
+        foreach(Chart C in ChartList)
+        {
+            foreach(Ocena o in NoteList)
+            {
+                if(o.type==C.chartType)
+                {
+                    C.chartNotes.Add(o);
+                }
+            }
+
+            Debug.Log("Chart: " + C.chartType);
+
+            foreach(Ocena o in C.chartNotes)
+            {
+                Debug.Log("Ocena w charcie " + o.value);
+
+                o.data = DateTime.ParseExact(o.date, "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture);
+                Debug.Log("DATA: " + o.data);
+            }
+        }
+
+        //na tym etapie mamy obiekty typu Chart o określonym typie, np mat pl fiz itd. Kazdy z tych wykresów ma swoją listę ocen. Teraz wystarczy zrobić reprezentację graficzną tego
+
+        int ChartX = 0;
+        foreach(Chart C in ChartList)
+        {
+            GameObject chartRoot = Instantiate(ChartRoot,new Vector3(ChartX,0,0),Quaternion.Euler(0,0,0));
+            chartRoot.name = C.chartType;
+            int OcenaX = 0;
+
+            C.chartNotes = C.chartNotes.OrderBy(o => o.date).ToList();
+            foreach (Ocena o in C.chartNotes)
+            {
+                GameObject Cube = Instantiate(ChartCube, new Vector3(OcenaX+ChartX, float.Parse(o.value.Replace(".", ","))/2.0f, 0), Quaternion.Euler(0, 0, 0));
+                Cube.name = o.value + " " + o.date;
+                Cube.transform.localScale = new Vector3(0.5f, float.Parse(o.value.Replace(".",",")), 0.5f);
+                OcenaX += 1;
+
+ 
+            }
+            ChartX += 5;
+        }
+
+
     }
     public static void CharacterUpload(string ColumnToUpdate, int idToUpdate)
     {
@@ -227,8 +320,7 @@ public class SQL : MonoBehaviour
                 }
                 break;
         }
-
-        GameObject.Find("loading").GetComponent<Text>().text = "DRAW SHOP!" + ShopItemsCount*spacing;
+        
     }
     public void CreateArmory()
     {
@@ -332,6 +424,32 @@ public class Uczen
         this.SpendableCoins = coins - CharacterValue;
         //Debug.Log("Uczen, primary:" + this.primary_obj.name + " secondary: " + this.secondary_obj.name + " throwable: " + this.throwable_obj.name + " med: " + this.med_obj.name + " armor: " + this.armor_obj.name + " perk: " + this.perk_obj.name + " CharacterValue: " + this.CharacterValue+ " coins: "+coins + " spendableCoins: " + SpendableCoins);
 
+    }
+}
+public class Ocena
+{
+    public string type = "";
+    public string date = "";
+    public DateTime data;
+    public string value = "";
+    public Ocena(string _type, string _date, string _value)
+    {
+        this.type = _type;
+        this.date = _date;
+        this.value = _value;
+
+
+
+    }
+}
+public class Chart
+{
+    public string chartType = "";
+    public List<Ocena> chartNotes = new List<Ocena>();
+
+    public Chart(string _chartType)
+    {
+        this.chartType = _chartType;
     }
 }
 public class Primary : Item
