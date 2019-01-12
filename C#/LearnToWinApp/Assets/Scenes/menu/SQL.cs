@@ -38,6 +38,7 @@ public class SQL : MonoBehaviour
     public List<Chart> ChartList = new List<Chart>();
     public GameObject ChartRoot; // empty który jest początkiem układu charta
     public GameObject ChartCube; // Słupek wykresu
+    public GameObject ChartText;
 
     //Textures
     public Texture2D empty_tex;
@@ -147,6 +148,8 @@ public class SQL : MonoBehaviour
     }
     public void NotesUpdate(string response)
     {
+        //Dodać niszczenie wszystkich wykresów, zerowanie list i usuwanie rootów z childrenami 
+
         string replacedResponse = response.Replace("},{", "}|{").Replace("[", "").Replace("]", "");
         string[] ResponseArray = replacedResponse.Split('|');
 
@@ -202,7 +205,7 @@ public class SQL : MonoBehaviour
 
         //na tym etapie mamy obiekty typu Chart o określonym typie, np mat pl fiz itd. Kazdy z tych wykresów ma swoją listę ocen. Teraz wystarczy zrobić reprezentację graficzną tego
 
-        int ChartX = 0;
+        int ChartX = 25;
         foreach(Chart C in ChartList)
         {
             GameObject chartRoot = Instantiate(ChartRoot,new Vector3(ChartX,0,0),Quaternion.Euler(0,0,0));
@@ -210,10 +213,17 @@ public class SQL : MonoBehaviour
             int OcenaX = 0;
 
             C.chartNotes = C.chartNotes.OrderBy(o => o.date).ToList();
+            GameObject ChartName = Instantiate(ChartText, new Vector3(OcenaX + ChartX, 0, 0), Quaternion.Euler(0, 0, 0));
+            ChartName.transform.SetParent(chartRoot.transform);
+            ChartName.GetComponent<TextMesh>().text = C.chartType;
             foreach (Ocena o in C.chartNotes)
             {
                 GameObject Cube = Instantiate(ChartCube, new Vector3(OcenaX+ChartX, float.Parse(o.value.Replace(".", ","))/2.0f, 0), Quaternion.Euler(0, 0, 0));
+                Cube.transform.SetParent(chartRoot.transform);
                 Cube.name = o.value + " " + o.date;
+                GameObject Text = Instantiate(ChartText, new Vector3(OcenaX + ChartX, 0, 0), Quaternion.Euler(0, 0, -90));
+                Text.GetComponent<TextMesh>().text = o.data.ToString().Replace("00:00:00", "");
+                Text.transform.localScale /= 2.0f;
                 Cube.transform.localScale = new Vector3(0.5f, float.Parse(o.value.Replace(".",",")), 0.5f);
                 OcenaX += 1;
 
